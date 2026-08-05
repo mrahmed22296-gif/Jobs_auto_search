@@ -1,623 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ahmed Abdelkarim · Accountant & Advisor</title>
-  <!-- Font & Icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f0f4fc;
-      color: #1a2639;
-      padding: 2rem 1.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .site-container {
-      max-width: 1200px;
-      width: 100%;
-      background: #ffffff;
-      border-radius: 40px;
-      box-shadow: 0 40px 80px -30px rgba(0, 20, 50, 0.25);
-      overflow: hidden;
-      transition: all 0.2s ease;
-    }
-
-    /* ===== HERO / HEADER ===== */
-    .hero {
-      background: linear-gradient(145deg, #0b1a33 0%, #1d3454 100%);
-      color: white;
-      padding: 2.8rem 3rem 2.2rem;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-    }
-
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #4f8bc9, #7bb3e6, #4f8bc9);
-      opacity: 0.5;
-    }
-
-    .hero-left h1 {
-      font-size: 2.8rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      line-height: 1.1;
-    }
-
-    .hero-left .title-role {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.8rem 1.2rem;
-      margin-top: 0.3rem;
-    }
-
-    .hero-left .title-role .badge {
-      background: rgba(255, 255, 255, 0.12);
-      padding: 0.3rem 1.2rem;
-      border-radius: 40px;
-      font-weight: 500;
-      font-size: 0.9rem;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .hero-left .tagline {
-      margin-top: 0.6rem;
-      font-size: 1rem;
-      opacity: 0.8;
-      max-width: 480px;
-      line-height: 1.6;
-      font-weight: 300;
-    }
-
-    .hero-right {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-      margin-top: 0.8rem;
-    }
-
-    .hero-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      background: rgba(255, 255, 255, 0.07);
-      color: white;
-      padding: 0.6rem 1.5rem;
-      border-radius: 60px;
-      font-weight: 500;
-      font-size: 0.9rem;
-      text-decoration: none;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      transition: all 0.2s ease;
-      backdrop-filter: blur(2px);
-    }
-
-    .hero-btn i {
-      font-size: 1rem;
-    }
-
-    .hero-btn:hover {
-      background: white;
-      color: #0b1a33;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px -6px rgba(0,0,0,0.3);
-    }
-
-    /* ===== MAIN GRID ===== */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 2.2fr;
-      gap: 0;
-      background: #fafcff;
-    }
-
-    /* ===== SIDEBAR ===== */
-    .sidebar {
-      background: #f0f6fe;
-      padding: 2.2rem 2rem 2.5rem;
-      border-right: 1px solid #e2ebf8;
-    }
-
-    .section-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.9px;
-      font-weight: 700;
-      color: #1f3a5f;
-      margin: 2rem 0 1rem 0;
-      border-bottom: 2px solid #d0def0;
-      padding-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .section-title i {
-      color: #2a4b7a;
-      font-size: 0.9rem;
-      width: 1.4rem;
-    }
-
-    .sidebar .section-title:first-of-type {
-      margin-top: 0;
-    }
-
-    .personal-item {
-      margin-bottom: 1.2rem;
-      line-height: 1.5;
-    }
-
-    .personal-item .label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: #2d4b77;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      display: block;
-      margin-bottom: 0.1rem;
-    }
-
-    .personal-item .value {
-      font-weight: 400;
-      color: #1a2639;
-    }
-
-    .skill-tag {
-      display: inline-block;
-      background: white;
-      padding: 0.2rem 0.9rem;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      margin: 0.15rem 0.15rem 0.15rem 0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-      border: 1px solid #d4e0f0;
-      color: #1f3a5f;
-    }
-
-    .lang-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.3rem 0;
-      border-bottom: 1px dashed #d9e2f0;
-    }
-    .lang-item:last-child { border-bottom: none; }
-    .lang-name { font-weight: 500; }
-    .lang-level {
-      color: #2d4b77;
-      font-size: 0.75rem;
-      background: #e2ebf9;
-      padding: 0.1rem 0.7rem;
-      border-radius: 20px;
-    }
-
-    .cert-item {
-      font-size: 0.85rem;
-      margin-bottom: 0.9rem;
-      line-height: 1.4;
-    }
-    .cert-item strong { display: block; font-weight: 600; color: #0b1a33; }
-    .cert-item .meta { font-size: 0.7rem; color: #3f5a7a; display: block; margin-top: 0.1rem; }
-
-    /* connect */
-    .connect-section {
-      margin-top: 2rem;
-      padding-top: 0.5rem;
-      border-top: 2px solid #d0def0;
-    }
-    .connect-section .section-title { margin-top: 0; border-bottom: none; padding-bottom: 0; }
-    .connect-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem 0.8rem;
-      margin-top: 0.5rem;
-    }
-    .btn-connect {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: white;
-      padding: 0.4rem 1.2rem;
-      border-radius: 60px;
-      font-weight: 600;
-      font-size: 0.8rem;
-      text-decoration: none;
-      color: #0b1a33;
-      border: 1px solid #d0def0;
-      transition: all 0.2s ease;
-    }
-    .btn-connect i { font-size: 1rem; width: 1.2rem; text-align: center; }
-    .btn-connect:hover {
-      background: #0b1a33;
-      color: white;
-      border-color: #0b1a33;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px -6px rgba(11, 26, 51, 0.25);
-    }
-    .btn-connect.linkedin:hover { background: #0a66c2; border-color: #0a66c2; }
-    .btn-connect.email:hover { background: #c71610; border-color: #c71610; }
-    .btn-connect.github:hover { background: #1b1f23; border-color: #1b1f23; }
-    .btn-connect.whatsapp:hover { background: #25d366; border-color: #25d366; }
-
-    /* ===== CONTENT ===== */
-    .content {
-      padding: 2.2rem 2.5rem 2.5rem;
-      background: white;
-    }
-
-    /* ===== ASLEIGH (professional services / expertise) ===== */
-    .expertise-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1.2rem;
-      margin: 1.2rem 0 1.8rem;
-    }
-
-    .expertise-card {
-      background: #f5f9ff;
-      border-radius: 18px;
-      padding: 1.2rem 1.2rem 1rem;
-      border: 1px solid #e6eefa;
-      transition: all 0.2s ease;
-    }
-
-    .expertise-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px -10px rgba(11, 26, 51, 0.08);
-      border-color: #b8cee8;
-    }
-
-    .expertise-card i {
-      font-size: 1.6rem;
-      color: #1d3454;
-      margin-bottom: 0.4rem;
-      display: block;
-    }
-
-    .expertise-card h4 {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #0b1a33;
-      margin-bottom: 0.15rem;
-    }
-
-    .expertise-card p {
-      font-size: 0.78rem;
-      color: #3f5a7a;
-      line-height: 1.5;
-    }
-
-    /* summary */
-    .summary-text {
-      font-size: 0.98rem;
-      line-height: 1.7;
-      color: #1e2c41;
-      margin-bottom: 1.8rem;
-      padding: 0.8rem 1.4rem;
-      background: #f5f9ff;
-      border-radius: 16px;
-      border-left: 5px solid #2a4b7a;
-    }
-
-    /* experience */
-    .exp-item {
-      margin-bottom: 1.8rem;
-    }
-    .exp-header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 0.15rem;
-    }
-    .exp-title { font-weight: 700; font-size: 1.05rem; color: #0b1a33; }
-    .exp-company { font-weight: 600; color: #1f3a5f; }
-    .exp-date {
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: #4c6b92;
-      background: #eef3fc;
-      padding: 0.1rem 0.9rem;
-      border-radius: 30px;
-    }
-    .exp-desc {
-      margin-top: 0.3rem;
-      padding-left: 0.2rem;
-      list-style: none;
-    }
-    .exp-desc li {
-      font-size: 0.9rem;
-      line-height: 1.6;
-      color: #1e2c41;
-      margin-bottom: 0.15rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
-    .exp-desc li::before {
-      content: "▹";
-      color: #2a4b7a;
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    hr {
-      border: none;
-      border-top: 1px solid #e2eaf5;
-      margin: 1.2rem 0;
-    }
-
-    .footer-meta {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      color: #2b4366;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 850px) {
-      .hero { flex-direction: column; align-items: flex-start; padding: 2rem; }
-      .hero-right { margin-top: 1.2rem; width: 100%; }
-      .main-grid { grid-template-columns: 1fr; }
-      .sidebar { border-right: none; border-bottom: 1px solid #dbe2ef; }
-      .hero-left h1 { font-size: 2.2rem; }
-    }
-
-    @media (max-width: 500px) {
-      body { padding: 0.6rem; }
-      .hero { padding: 1.5rem; }
-      .content { padding: 1.2rem; }
-      .sidebar { padding: 1.2rem; }
-      .exp-header { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
-      .expertise-grid { grid-template-columns: 1fr 1fr; }
-      .connect-buttons { flex-direction: column; align-items: stretch; }
-      .btn-connect { justify-content: center; }
-    }
-
-    @media print {
-      body { background: white; padding: 0.1in; }
-      .site-container { box-shadow: none; border-radius: 0; }
-      .hero-btn, .btn-connect { border: 1px solid #ccc; background: #f9f9f9; color: #0b1a33; }
-      .hero-btn:hover, .btn-connect:hover { transform: none; background: #f9f9f9; color: #0b1a33; border-color: #ccc; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البحث الذكي عن الوظائف - DeepSeek</title>
+    <!-- استخدام Tailwind CSS للتصميم السريع والحديث -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
 </head>
-<body>
-<div class="site-container">
-
-  <!-- ===== HERO ===== -->
-  <div class="hero">
-    <div class="hero-left">
-      <h1>Ahmed Abdelkarim</h1>
-      <div class="title-role">
-        <span class="badge"><i class="fas fa-briefcase" style="margin-right: 6px;"></i>Accountant · 12+ years</span>
-        <span class="badge"><i class="fas fa-map-pin"></i> Kuwait / Egypt</span>
-      </div>
-      <div class="tagline">
-        Senior Accountant at Bench Business Advisory · Financial analysis, auditing, and strategic advisory across industries.
-      </div>
-    </div>
-    <div class="hero-right">
-      <a href="mailto:mr.ahmed22296@gmail.com" class="hero-btn"><i class="fas fa-envelope"></i> Email</a>
-      <a href="#" class="hero-btn"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
-      <a href="#" class="hero-btn"><i class="fab fa-github"></i> GitHub</a>
-    </div>
-  </div>
-
-  <!-- ===== MAIN ===== -->
-  <div class="main-grid">
-
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <!-- Personal -->
-      <div class="section-title"><i class="fas fa-user"></i> Personal</div>
-      <div class="personal-item">
-        <span class="label">Nationality</span>
-        <span class="value">Egyptian</span>
-      </div>
-      <div class="personal-item">
-        <span class="label">Languages</span>
-        <div class="lang-item"><span class="lang-name">Arabic</span><span class="lang-level">Native</span></div>
-        <div class="lang-item"><span class="lang-name">English</span><span class="lang-level">Very Good (Professional)</span></div>
-      </div>
-
-      <!-- Certifications -->
-      <div class="section-title"><i class="fas fa-certificate"></i> Certifications</div>
-      <div class="cert-item">
-        <strong>Fellowship in Business Administration</strong>
-        <span class="meta">Cambridge Business College · Sep 2021</span>
-      </div>
-      <div class="cert-item">
-        <strong>Financial Statements Prep. (English)</strong>
-        <span class="meta">Assiut University · Aug 2012</span>
-      </div>
-      <div class="cert-item">
-        <strong>Fundamentals of Digital Marketing</strong>
-        <span class="meta">Google Skills · Dec 2019</span>
-      </div>
-      <div class="cert-item">
-        <strong>Effective Leadership & Crisis Management</strong>
-        <span class="meta">Arab Group for Studies · May 2020</span>
-      </div>
-      <div class="cert-item">
-        <strong>Entrepreneurship & Business Creation</strong>
-        <span class="meta">Assiut University · Mar 2023</span>
-      </div>
-
-      <!-- Technical -->
-      <div class="section-title"><i class="fas fa-laptop-code"></i> Technical</div>
-      <div style="margin-bottom: 0.6rem;">
-        <span class="skill-tag">Odoo ERP</span>
-        <span class="skill-tag">MS Access</span>
-        <span class="skill-tag">Excel (Advanced)</span>
-        <span class="skill-tag">PowerPoint</span>
-        <span class="skill-tag">Word</span>
-      </div>
-      <div style="font-size: 0.8rem; color: #1f3a5f; line-height: 1.8;">
-        <i class="fas fa-check-circle" style="color: #2a4b7a; width: 1.2rem;"></i> Financial Reporting & Analysis<br>
-        <i class="fas fa-check-circle" style="color: #2a4b7a; width: 1.2rem;"></i> Auditing & Internal Controls<br>
-        <i class="fas fa-check-circle" style="color: #2a4b7a; width: 1.2rem;"></i> Budgeting & Bank Reconciliation<br>
-        <i class="fas fa-check-circle" style="color: #2a4b7a; width: 1.2rem;"></i> Credit Analysis & Risk
-      </div>
-
-      <!-- Soft Skills -->
-      <div class="section-title"><i class="fas fa-heart"></i> Soft Skills</div>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.4rem 0.6rem;">
-        <span class="skill-tag" style="background:#e5eefa; border-color:#c8d8ec;">Communication</span>
-        <span class="skill-tag" style="background:#e5eefa; border-color:#c8d8ec;">Analytical thinking</span>
-        <span class="skill-tag" style="background:#e5eefa; border-color:#c8d8ec;">Time management</span>
-        <span class="skill-tag" style="background:#e5eefa; border-color:#c8d8ec;">Attention to detail</span>
-        <span class="skill-tag" style="background:#e5eefa; border-color:#c8d8ec;">Work under pressure</span>
-      </div>
-
-      <!-- Connect -->
-      <div class="connect-section">
-        <div class="section-title"><i class="fas fa-handshake"></i> Connect</div>
-        <div class="connect-buttons">
-          <a href="#" class="btn-connect linkedin"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
-          <a href="mailto:mr.ahmed22296@gmail.com" class="btn-connect email"><i class="fas fa-envelope"></i> Email</a>
-          <a href="#" class="btn-connect github"><i class="fab fa-github"></i> GitHub</a>
-          <a href="#" class="btn-connect whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+<body class="bg-gray-50 text-gray-800 min-h-screen py-10 px-4">
+    <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-2">مساعد التوظيف الذكي</h1>
+        <p class="text-center text-gray-500 mb-8">أدخل رابط ملفك الشخصي على لينكدإن ومفتاح DeepSeek API للعثور على الوظائف المناسبة لك فوراً.</p>
+        
+        <div class="space-y-5">
+            <div>
+                <label class="block text-sm font-semibold mb-2">مفتاح DeepSeek API</label>
+                <input type="password" id="apiKey" placeholder="sk-..." class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-2">رابط ملف لينكدإن (LinkedIn Profile URL)</label>
+                <input type="url" id="linkedinUrl" placeholder="https://www.linkedin.com/in/username" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <button onclick="searchJobs()" id="searchBtn" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition duration-200 shadow-md">
+                ابحث عن الوظائف المناسبة
+            </button>
         </div>
-        <p style="font-size:0.65rem; color:#4a6b8f; margin-top:0.5rem; opacity:0.7;">
-          <i class="fas fa-link"></i> Update URLs to your profiles
-        </p>
-      </div>
+
+        <!-- مؤشر التحميل -->
+        <div id="loading" class="hidden text-center py-10">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
+            <p class="mt-3 text-gray-600 font-medium">جاري تحليل الملف والبحث عن الوظائف عبر DeepSeek...</p>
+        </div>
+
+        <!-- نتائج البحث -->
+        <div id="results" class="mt-8 space-y-4"></div>
     </div>
 
-    <!-- CONTENT -->
-    <div class="content">
+<script>
+async function searchJobs() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    const linkedinUrl = document.getElementById('linkedinUrl').value.trim();
+    const resultsDiv = document.getElementById('results');
+    const loadingDiv = document.getElementById('loading');
 
-      <!-- ===== ASLEIGH: Professional expertise ===== -->
-      <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.2rem;">
-        <i class="fas fa-star" style="color: #1d3454; font-size: 1.2rem;"></i>
-        <span style="font-weight: 700; font-size: 1rem; color: #0b1a33; letter-spacing: 0.3px;">Professional Expertise</span>
-      </div>
-      <div class="expertise-grid">
-        <div class="expertise-card">
-          <i class="fas fa-chart-line"></i>
-          <h4>Financial Analysis</h4>
-          <p>IFRS statements, profitability trends, and strategic recommendations.</p>
-        </div>
-        <div class="expertise-card">
-          <i class="fas fa-file-invoice"></i>
-          <h4>Auditing & Controls</h4>
-          <p>Internal control design, risk mitigation, and compliance reviews.</p>
-        </div>
-        <div class="expertise-card">
-          <i class="fas fa-cubes"></i>
-          <h4>Odoo ERP</h4>
-          <p>Full-cycle implementation, bookkeeping, and custom reporting.</p>
-        </div>
-        <div class="expertise-card">
-          <i class="fas fa-hand-holding-usd"></i>
-          <h4>Credit & Risk</h4>
-          <p>Creditworthiness assessment, financing, and collection strategies.</p>
-        </div>
-      </div>
+    if (!apiKey || !linkedinUrl) {
+        alert('الرجاء إدخال مفتاح الـ API ورابط لينكدإن.');
+        return;
+    }
 
-      <!-- Summary -->
-      <div class="summary-text">
-        <i class="fas fa-quote-left" style="color: #2a4b7a; margin-right: 8px;"></i>
-        Results-driven accountant with 12+ years of cross-border experience. I help businesses strengthen financial controls, optimize performance, and make data-driven decisions. Currently serving as Senior Accountant at Bench Business Advisory, Kuwait.
-      </div>
+    loadingDiv.classList.remove('hidden');
+    resultsDiv.innerHTML = '';
 
-      <!-- Experience -->
-      <div class="section-title" style="margin-top:0; border-bottom: 2px solid #d0def0; display:flex; gap:0.5rem;">
-        <i class="fas fa-briefcase"></i> Experience
-      </div>
+    try {
+        const response = await fetch('https://api.deepseek.com/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: "deepseek-chat",
+                messages: [
+                    {
+                        role: "system",
+                        content: "أنت مساعد توظيف محترف وخبير تحليل سير ذاتية. بناءً على رابط ملف لينكدإن المقدم، قم باقتراح 4 وظائف مناسبة مع المسمى الوظيفي، والمهارات المتوافقة، ونسبة التوافق التقريبية، ووصف مختصر لسبب الترشيح. قدم النتائج بتنسيق HTML نظيف ومرتب."
+                    },
+                    {
+                        role: "user",
+                        content: `هذا هو رابط ملف لينكدإن الخاص بي: ${linkedinUrl}. اقترح لي وظائف متطابقة.`
+                    }
+                ],
+                stream: false
+            })
+        });
 
-      <div class="exp-item">
-        <div class="exp-header">
-          <span class="exp-title">Senior Accountant</span>
-          <span class="exp-company">Bench Business Advisory · Kuwait</span>
-          <span class="exp-date">Jun 2022 – Present</span>
-        </div>
-        <ul class="exp-desc">
-          <li>Manage accounting & auditing for multiple clients across industries</li>
-          <li>Prepare monthly, quarterly, annual IFRS financial statements</li>
-          <li>Financial analysis, insights & recommendations to senior management</li>
-          <li>Review revenues, expenses & profitability trends for strategic decisions</li>
-          <li>Extensive Odoo ERP bookkeeping & reporting; identify financial weaknesses</li>
-        </ul>
-      </div>
+        const data = await response.json();
+        loadingDiv.classList.add('hidden');
 
-      <div class="exp-item">
-        <div class="exp-header">
-          <span class="exp-title">Accountant</span>
-          <span class="exp-company">Business & Technology Incubator · Egypt</span>
-          <span class="exp-date">2020 – 2022</span>
-        </div>
-        <ul class="exp-desc">
-          <li>Prepared estimated budgets and monitored actual vs targets</li>
-          <li>Developed revenue/expense reports for management review</li>
-          <li>Improved administrative & financial systems</li>
-          <li>Supported financial planning and cost control initiatives</li>
-        </ul>
-      </div>
-
-      <div class="exp-item">
-        <div class="exp-header">
-          <span class="exp-title">Accountant</span>
-          <span class="exp-company">Baytna Real Estate Company · Kuwait</span>
-          <span class="exp-date">2018 – 2019</span>
-        </div>
-        <ul class="exp-desc">
-          <li>Reviewed petty cash, rental income, and customer collections</li>
-          <li>Monitored tenants' & clients' accounts, managed outstanding balances</li>
-          <li>Prepared financial reports and performed bank reconciliations</li>
-          <li>Supported management with accurate financial data</li>
-        </ul>
-      </div>
-
-      <div class="exp-item">
-        <div class="exp-header">
-          <span class="exp-title">Accountant & Credit Officer</span>
-          <span class="exp-company">Tannia for Small Projects · Egypt</span>
-          <span class="exp-date">2014 – 2018</span>
-        </div>
-        <ul class="exp-desc">
-          <li>Studied clients' credit files and financial documents</li>
-          <li>Assessed creditworthiness and financing eligibility</li>
-          <li>Monitored financing, repayment schedules, and collections</li>
-          <li>Coordinated with management to reduce credit risk exposure</li>
-        </ul>
-      </div>
-
-      <hr>
-      <div class="footer-meta">
-        <span><i class="fas fa-database" style="margin-right:6px;"></i> Odoo · Excel · Access</span>
-        <span><i class="fas fa-file-alt" style="margin-right:6px;"></i> IFRS · Financial Analysis</span>
-        <span><i class="fas fa-globe" style="margin-right:6px;"></i> Digital literacy</span>
-      </div>
-    </div>
-  </div>
-</div>
+        if (data.choices && data.choices.length > 0) {
+            const aiContent = data.choices[0].message.content;
+            resultsDiv.innerHTML = `<div class="p-6 bg-blue-50 rounded-xl border border-blue-200 leading-relaxed">${aiContent}</div>`;
+        } else {
+            resultsDiv.innerHTML = `<p class="text-red-500 text-center font-medium">حدث خطأ أثناء استرجاع البيانات من DeepSeek.</p>`;
+        }
+    } catch (error) {
+        loadingDiv.classList.add('hidden');
+        resultsDiv.innerHTML = `<p class="text-red-500 text-center font-medium">حدث خطأ في الاتصال: ${error.message}</p>`;
+    }
+}
+</script>
 </body>
 </html>
