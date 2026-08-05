@@ -4,23 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>البحث الذكي عن الوظائف - DeepSeek</title>
-    <!-- استخدام Tailwind CSS للتصميم السريع والحديث -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Cairo', sans-serif; }
-    </style>
+    <style> body { font-family: 'Cairo', sans-serif; } </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen py-10 px-4">
     <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
         <h1 class="text-3xl font-bold text-center text-blue-600 mb-2">مساعد التوظيف الذكي</h1>
-        <p class="text-center text-gray-500 mb-8">أدخل رابط ملفك الشخصي على لينكدإن ومفتاح DeepSeek API للعثور على الوظائف المناسبة لك فوراً.</p>
+        <p class="text-center text-gray-500 mb-8">أدخل رابط ملفك الشخصي على لينكدإن للعثور على الوظائف المناسبة لك فوراً.</p>
         
         <div class="space-y-5">
-            <div>
-                <label class="block text-sm font-semibold mb-2">مفتاح DeepSeek API</label>
-                <input type="password" id="apiKey" placeholder="sk-..." class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
             <div>
                 <label class="block text-sm font-semibold mb-2">رابط ملف لينكدإن (LinkedIn Profile URL)</label>
                 <input type="url" id="linkedinUrl" placeholder="https://www.linkedin.com/in/username" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -30,25 +23,22 @@
             </button>
         </div>
 
-        <!-- مؤشر التحميل -->
         <div id="loading" class="hidden text-center py-10">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
             <p class="mt-3 text-gray-600 font-medium">جاري تحليل الملف والبحث عن الوظائف عبر DeepSeek...</p>
         </div>
 
-        <!-- نتائج البحث -->
         <div id="results" class="mt-8 space-y-4"></div>
     </div>
 
 <script>
 async function searchJobs() {
-    const apiKey = document.getElementById('apiKey').value.trim();
     const linkedinUrl = document.getElementById('linkedinUrl').value.trim();
     const resultsDiv = document.getElementById('results');
     const loadingDiv = document.getElementById('loading');
 
-    if (!apiKey || !linkedinUrl) {
-        alert('الرجاء إدخال مفتاح الـ API ورابط لينكدإن.');
+    if (!linkedinUrl) {
+        alert('الرجاء إدخال رابط لينكدإن.');
         return;
     }
 
@@ -56,36 +46,20 @@ async function searchJobs() {
     resultsDiv.innerHTML = '';
 
     try {
-        const response = await fetch('https://api.deepseek.com/chat/completions', {
+        // الاتصال بالخادم الوسيط الخاص بك على Vercel
+        const response = await fetch('/api/search', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-                model: "deepseek-chat",
-                messages: [
-                    {
-                        role: "system",
-                        content: "أنت مساعد توظيف محترف وخبير تحليل سير ذاتية. بناءً على رابط ملف لينكدإن المقدم، قم باقتراح 4 وظائف مناسبة مع المسمى الوظيفي، والمهارات المتوافقة، ونسبة التوافق التقريبية، ووصف مختصر لسبب الترشيح. قدم النتائج بتنسيق HTML نظيف ومرتب."
-                    },
-                    {
-                        role: "user",
-                        content: `هذا هو رابط ملف لينكدإن الخاص بي: ${linkedinUrl}. اقترح لي وظائف متطابقة.`
-                    }
-                ],
-                stream: false
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ linkedinUrl })
         });
 
         const data = await response.json();
         loadingDiv.classList.add('hidden');
 
-        if (data.choices && data.choices.length > 0) {
-            const aiContent = data.choices[0].message.content;
-            resultsDiv.innerHTML = `<div class="p-6 bg-blue-50 rounded-xl border border-blue-200 leading-relaxed">${aiContent}</div>`;
+        if (response.ok && data.result) {
+            resultsDiv.innerHTML = `<div class="p-6 bg-blue-50 rounded-xl border border-blue-200 leading-relaxed">${data.result}</div>`;
         } else {
-            resultsDiv.innerHTML = `<p class="text-red-500 text-center font-medium">حدث خطأ أثناء استرجاع البيانات من DeepSeek.</p>`;
+            resultsDiv.innerHTML = `<p class="text-red-500 text-center font-medium">${data.error || 'حدث خطأ أثناء معالجة الطلب.'}</p>`;
         }
     } catch (error) {
         loadingDiv.classList.add('hidden');
