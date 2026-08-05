@@ -15,8 +15,8 @@ export default async function handler(req, res) {
     }
 
     try {
-        // تحديث مسار النموذج ليتوافق مع الإصدار المستقر المباشر
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
+        // استخدام الإصدار v1 مع النموذج المعتمد gemini-1.5-flash مباشرة
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
