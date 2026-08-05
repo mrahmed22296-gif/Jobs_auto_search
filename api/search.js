@@ -4,10 +4,12 @@ export default async function handler(req, res) {
     }
 
     const { linkedinUrl } = req.body;
-    const apiKey = process.env.GEMINI_API_KEY; // سنقوم بتسمية المتغير بهذا الاسم في Vercel
+    
+    // قراءة مفتاح Gemini أو DeepSeek أيهما متوفر في إعدادات Vercel
+    const apiKey = process.env.GEMINI_API_KEY || process.env.DEEPSEEK_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'مفتاح الـ API غير مُعرّف في إعدادات Vercel.' });
+        return res.status(500).json({ error: 'مفتاح الـ API غير مُعرّف في إعدادات Vercel. يرجى إضافته باسم GEMINI_API_KEY' });
     }
 
     if (!linkedinUrl) {
@@ -15,7 +17,6 @@ export default async function handler(req, res) {
     }
 
     try {
-        // استخدام نموذج Gemini 1.5 Flash المجاني والسريع
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: {
@@ -26,7 +27,7 @@ export default async function handler(req, res) {
                     {
                         parts: [
                             {
-                                text: `أنت مساعد توظيف محترف وخبير تحليل سير ذاتية. بناءً على رابط ملف لينكدإن المقدم الآتي: "${linkedinUrl}", قم باقتراح 4 وظائف مناسبة مع المسمى الوظيفي، والمهارات المتوافقة، ونسبة التوافق التقريبية، ووصف مختصر لسبب الترشيح. قدم النتائج بتنسيق HTML نظيف ومرتب (باستخدام عناصر HTML مثل div و ul و li وغيرها وبتصميم عربي جميل).`
+                                text: `أنت مساعد توظيف محترف وخبير تحليل سير ذاتية. بناءً على رابط ملف لينكدإن المقدم الآتي: "${linkedinUrl}", قم باقتراح 4 وظائف مناسبة مع المسمى الوظيفي، والمهارات المتوافقة، ونسبة التوافق التقريبية، ووصف مختصر لسبب الترشيح. قدم النتائج بتنسيق HTML نظيف ومرتب.`
                             }
                         ]
                     }
