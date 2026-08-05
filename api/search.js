@@ -4,12 +4,10 @@ export default async function handler(req, res) {
     }
 
     const { linkedinUrl } = req.body;
-    
-    // قراءة مفتاح Gemini أو DeepSeek أيهما متوفر في إعدادات Vercel
     const apiKey = process.env.GEMINI_API_KEY || process.env.DEEPSEEK_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'مفتاح الـ API غير مُعرّف في إعدادات Vercel. يرجى إضافته باسم GEMINI_API_KEY' });
+        return res.status(500).json({ error: 'مفتاح الـ API غير مُعرّف في إعدادات Vercel.' });
     }
 
     if (!linkedinUrl) {
@@ -17,7 +15,8 @@ export default async function handler(req, res) {
     }
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        // التعديل هنا: استخدام الإصدار v1 بدلاً من v1beta
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
