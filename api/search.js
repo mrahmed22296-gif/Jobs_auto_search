@@ -4,10 +4,10 @@ export default async function handler(req, res) {
     }
 
     const { linkedinUrl } = req.body;
-    const apiKey = process.env.DEEPSEEK_API_KEY; // قراءة المفتاح من إعدادات Vercel
+    const apiKey = process.env.DEEPSEEK_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'مفتاح الـ API غير مُعرّف في إعدادات الخادم.' });
+        return res.status(500).json({ error: 'مفتاح الـ API غير مُعرّف في إعدادات Vercel.' });
     }
 
     if (!linkedinUrl) {
@@ -39,12 +39,18 @@ export default async function handler(req, res) {
 
         const data = await response.json();
 
+        if (!response.ok) {
+            // طباعة الخطأ الحقيقي القادم من DeepSeek لتسهيل الاكتشاف
+            const errorMsg = data.error?.message || JSON.stringify(data);
+            return res.status(response.status).json({ error: `خطأ من DeepSeek: ${errorMsg}` });
+        }
+
         if (data.choices && data.choices.length > 0) {
             return res.status(200).json({ result: data.choices[0].message.content });
         } else {
-            return res.status(500).json({ error: 'فشل في جلب النتائج من نموذج الذكاء الاصطناعي.' });
+            return res.status(500).json({ error: 'لم يتم استلام أي استجابة من نموذج الذكاء الاصطناعي.' });
         }
     } catch (error) {
-        return res.status(500).json({ error: 'حدث خطأ داخلي في الخادم: ' + error.message });
+        return res.status(500).json({ error: 'خطأ في الاتصال بالخادم: ' + error.message });
     }
 }
