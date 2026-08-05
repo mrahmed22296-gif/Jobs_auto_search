@@ -316,6 +316,76 @@
       font-weight: 500;
     }
 
+    /* --- CONNECT BUTTONS --- */
+    .connect-section {
+      margin-top: 1.8rem;
+      padding-top: 0.8rem;
+      border-top: 2px solid #d0def0;
+    }
+
+    .connect-section .section-title {
+      margin-top: 0;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .connect-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 1rem;
+      margin-top: 0.6rem;
+    }
+
+    .btn-connect {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: white;
+      padding: 0.5rem 1.4rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+      color: #0b1a33;
+      border: 1px solid #d0def0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s ease;
+    }
+
+    .btn-connect i {
+      font-size: 1.1rem;
+      width: 1.4rem;
+      text-align: center;
+    }
+
+    .btn-connect:hover {
+      background: #0b1a33;
+      color: white;
+      border-color: #0b1a33;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px -6px rgba(11, 26, 51, 0.2);
+    }
+
+    .btn-connect.linkedin:hover {
+      background: #0a66c2;
+      border-color: #0a66c2;
+    }
+
+    .btn-connect.email:hover {
+      background: #c71610;
+      border-color: #c71610;
+    }
+
+    .btn-connect.github:hover {
+      background: #1b1f23;
+      border-color: #1b1f23;
+    }
+
+    .btn-connect.whatsapp:hover {
+      background: #25d366;
+      border-color: #25d366;
+    }
+
     /* responsiveness */
     @media (max-width: 800px) {
       .header {
@@ -373,9 +443,17 @@
         align-items: flex-start;
         border-radius: 20px;
       }
+
+      .connect-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-connect {
+        justify-content: center;
+      }
     }
 
-    /* print-friendly */
     @media print {
       body {
         background: white;
@@ -384,6 +462,17 @@
       .cv-container {
         box-shadow: none;
         border-radius: 0;
+      }
+      .btn-connect {
+        border: 1px solid #ccc;
+        background: #f9f9f9;
+        box-shadow: none;
+      }
+      .btn-connect:hover {
+        transform: none;
+        background: #f9f9f9;
+        color: #0b1a33;
+        border-color: #ccc;
       }
     }
   </style>
@@ -467,6 +556,20 @@
           <span>Time management</span>
           <span>Attention to detail</span>
           <span>Work under pressure</span>
+        </div>
+
+        <!-- ===== CONNECT BUTTONS ===== -->
+        <div class="connect-section">
+          <div class="section-title"><i class="fas fa-handshake"></i> Connect</div>
+          <div class="connect-buttons">
+            <a href="#" class="btn-connect linkedin" target="_blank"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+            <a href="mailto:mr.ahmed22296@gmail.com" class="btn-connect email"><i class="fas fa-envelope"></i> Email</a>
+            <a href="#" class="btn-connect github" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+            <a href="#" class="btn-connect whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+          </div>
+          <p style="font-size: 0.7rem; color: #4a6b8f; margin-top: 0.6rem; opacity: 0.7;">
+            <i class="fas fa-link"></i> Click to connect (placeholders – update your URLs)
+          </p>
         </div>
       </div>
 
