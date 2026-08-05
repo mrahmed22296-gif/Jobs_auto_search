@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     }
 
     const { linkedinUrl } = req.body;
-    const apiKey = process.env.GEMINI_API_KEY || process.env.DEEPSEEK_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
         return res.status(500).json({ error: 'مفتاح الـ API غير مُعرّف في إعدادات Vercel.' });
@@ -15,8 +15,8 @@ export default async function handler(req, res) {
     }
 
     try {
-        // تحديث مسار النموذج ليتوافق مع الإصدار المستقر المباشر
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
+        // استخدام النموذج الصحيح مع الإصدار المستقر
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -26,11 +26,17 @@ export default async function handler(req, res) {
                     {
                         parts: [
                             {
-                                text: `أنت مساعد توظيف محترف وخبير تحليل سير ذاتية. بناءً على رابط ملف لينكدإن المقدم الآتي: "${linkedinUrl}", قم باقتراح 4 وظائف مناسبة مع المسمى الوظيفي، والمهارات المتوافقة، ونسبة التوافق التقريبية، ووصف مختصر لسبب الترشيح. قدم النتائج بتنسيق HTML نظيف ومرتب.`
+                                text: `أنت مساعد توظيف محترف وخبير تحليل سير ذاتية. بناءً على رابط ملف لينكدإن المقدم الآتي: "${linkedinUrl}", قم باقتراح 4 وظائف مناسبة مع المسمى الوظيفي، والمهارات المتوافقة، ونسبة التوافق التقريبية، ووصف مختصر لسبب الترشيح. قدم النتائج بتنسيق HTML نظيف ومرتب مع ألوان جذابة وتصميم احترافي.`
                             }
                         ]
                     }
-                ]
+                ],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 1000,
+                    topK: 40,
+                    topP: 0.95
+                }
             })
         });
 
