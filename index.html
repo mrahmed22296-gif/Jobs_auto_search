@@ -13,11 +13,16 @@
 <body class="bg-gray-50 text-gray-800 min-h-screen py-10 px-4">
     <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
         <h1 class="text-3xl font-bold text-center text-blue-600 mb-2">مساعد التوظيف الذكي</h1>
-        <p class="text-center text-gray-500 mb-8">أدخل رابط ملفك الشخصي على لينكدإن للعثور على الوظائف المناسبة لك فوراً.</p>
+        <p class="text-center text-gray-500 mb-8">
+            أدخل رابط لينكدإن + نص السيرة الذاتية للحصول على اقتراحات وظائف دقيقة
+        </p>
         
         <div class="space-y-5">
+            <!-- رابط لينكدإن -->
             <div>
-                <label class="block text-sm font-semibold mb-2">رابط ملف لينكدإن (LinkedIn Profile URL)</label>
+                <label class="block text-sm font-semibold mb-2">
+                    رابط ملف لينكدإن <span class="text-gray-400 font-normal">(اختياري)</span>
+                </label>
                 <input 
                     type="url" 
                     id="linkedinUrl" 
@@ -25,6 +30,24 @@
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
             </div>
+
+            <!-- نص السيرة الذاتية -->
+            <div>
+                <label class="block text-sm font-semibold mb-2">
+                    نص السيرة الذاتية / الخبرات والمهارات
+                    <span class="text-red-500">*</span>
+                </label>
+                <textarea 
+                    id="profileText" 
+                    rows="9"
+                    placeholder="الصق هنا نص السيرة الذاتية أو ملخص الخبرات والمهارات والتعليم من لينكدإن أو ملف PDF..."
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+                ></textarea>
+                <p class="text-xs text-gray-400 mt-1">
+                    كلما كان النص أدق وأشمل، كانت اقتراحات الوظائف أفضل
+                </p>
+            </div>
+
             <button 
                 onclick="searchJobs()" 
                 id="searchBtn" 
@@ -36,7 +59,7 @@
 
         <div id="loading" class="hidden text-center py-10">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-            <p class="mt-3 text-gray-600 font-medium">جاري تحليل الملف والبحث عن الوظائف المناسبة...</p>
+            <p class="mt-3 text-gray-600 font-medium">جاري تحليل السيرة الذاتية واقتراح الوظائف المناسبة...</p>
         </div>
 
         <div id="results" class="mt-8 space-y-4"></div>
@@ -45,16 +68,16 @@
 <script>
 async function searchJobs() {
     const linkedinUrl = document.getElementById('linkedinUrl').value.trim();
+    const profileText = document.getElementById('profileText').value.trim();
     const resultsDiv = document.getElementById('results');
     const loadingDiv = document.getElementById('loading');
     const searchBtn = document.getElementById('searchBtn');
 
-    if (!linkedinUrl) {
-        alert('الرجاء إدخال رابط لينكدإن.');
+    if (!profileText || profileText.length < 40) {
+        alert('من فضلك الصق نص السيرة الذاتية أو ملخص الخبرات (على الأقل 40 حرف).');
         return;
     }
 
-    // تعطيل الزر أثناء التحميل
     searchBtn.disabled = true;
     loadingDiv.classList.remove('hidden');
     resultsDiv.innerHTML = '';
@@ -63,10 +86,9 @@ async function searchJobs() {
         const response = await fetch('/api/search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ linkedinUrl })
+            body: JSON.stringify({ linkedinUrl, profileText })
         });
 
-        // قراءة الرد كنص أولاً لتجنب أخطاء JSON
         const text = await response.text();
         let data;
 
