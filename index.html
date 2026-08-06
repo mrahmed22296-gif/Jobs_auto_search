@@ -7,237 +7,27 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
     <style>
         body { font-family: 'Cairo', sans-serif; }
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15);
-        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
-    <!-- Header -->
-    <header class="gradient-bg text-white py-8 px-4 shadow-lg">
-        <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-3xl md:text-4xl font-extrabold mb-2">مساعد التوظيف الذكي</h1>
-            <p class="text-indigo-100 text-sm md:text-base opacity-90">
-                ارفع سيرتك الذاتية واحصل على وظائف مناسبة مع روابط التقديم المباشر
-            </p>
-        </div>
-    </header>
-
-    <main class="max-w-4xl mx-auto px-4 py-8">
-        
-        <!-- Form Card -->
-        <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8 mb-8 border border-slate-100">
-            <div class="space-y-6">
-                
-                <!-- LinkedIn -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                        رابط لينكدإن <span class="text-slate-400 font-normal">(اختياري)</span>
-                    </label>
-                    <input 
-                        type="url" 
-                        id="linkedinUrl" 
-                        placeholder="https://www.linkedin.com/in/username" 
-                        class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-slate-50"
-                    >
-                </div>
-
-                <!-- Job Title Search -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                        البحث باسم وظيفة معينة <span class="text-slate-400 font-normal">(اختياري)</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        id="jobTitle" 
-                        placeholder="مثال: مدير مالي، محاسب أول، مراجع داخلي..." 
-                        class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-slate-50"
-                    >
-                </div>
-
-                <!-- PDF Upload -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                        رفع ملف السيرة الذاتية (PDF)
-                        <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <input 
-                            type="file" 
-                            id="pdfFile" 
-                            accept=".pdf,application/pdf"
-                            class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition bg-slate-50 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-                        >
-                    </div>
-                    <p class="text-xs text-slate-400 mt-2">يفضل أن يكون الملف أقل من 5 ميجا</p>
-                </div>
-
-                <!-- Search Button -->
-                <button 
-                    onclick="searchJobs()" 
-                    id="searchBtn" 
-                    class="w-full gradient-bg text-white py-4 rounded-2xl font-bold text-lg hover:opacity-90 transition duration-200 shadow-lg shadow-indigo-200 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                    ابحث عن الوظائف المناسبة
-                </button>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center px-4">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10 max-w-md w-full text-center border border-slate-100">
+            <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
             </div>
-        </div>
-
-        <!-- Loading -->
-        <div id="loading" class="hidden text-center py-16">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent"></div>
-            <p class="mt-4 text-slate-600 font-medium" id="loadingText">جاري قراءة ملف السيرة الذاتية...</p>
-        </div>
-
-        <!-- Results -->
-        <div id="results" class="space-y-4"></div>
-
-        <!-- Clear Results Button -->
-        <div id="clearSection" class="hidden mt-6 text-center">
-            <button onclick="clearResults()" class="text-sm text-slate-500 hover:text-red-500 transition underline">
-                مسح النتائج
-            </button>
-        </div>
-    </main>
-
-    <footer class="text-center text-slate-400 text-sm py-8">
-        مساعد التوظيف الذكي © 2026
-    </footer>
-
-<script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-    // استرجاع البيانات المحفوظة عند تحميل الصفحة
-    window.addEventListener('DOMContentLoaded', () => {
-        const savedResults = localStorage.getItem('jobResults');
-        const savedLinkedin = localStorage.getItem('linkedinUrl');
-        const savedJobTitle = localStorage.getItem('jobTitle');
-
-        if (savedLinkedin) document.getElementById('linkedinUrl').value = savedLinkedin;
-        if (savedJobTitle) document.getElementById('jobTitle').value = savedJobTitle;
-
-        if (savedResults) {
-            document.getElementById('results').innerHTML = savedResults;
-            document.getElementById('clearSection').classList.remove('hidden');
-        }
-    });
-
-    async function extractTextFromPDF(file) {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        
-        let fullText = '';
-        
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            const pageText = content.items.map(item => item.str).join(' ');
-            fullText += pageText + '\n\n';
-        }
-        
-        return fullText.trim();
-    }
-
-    async function searchJobs() {
-        const linkedinUrl = document.getElementById('linkedinUrl').value.trim();
-        const jobTitle = document.getElementById('jobTitle').value.trim();
-        const fileInput = document.getElementById('pdfFile');
-        const resultsDiv = document.getElementById('results');
-        const loadingDiv = document.getElementById('loading');
-        const loadingText = document.getElementById('loadingText');
-        const searchBtn = document.getElementById('searchBtn');
-        const clearSection = document.getElementById('clearSection');
-
-        if (!fileInput.files || fileInput.files.length === 0) {
-            alert('من فضلك اختر ملف السيرة الذاتية بصيغة PDF.');
-            return;
-        }
-
-        const file = fileInput.files[0];
-
-        if (file.type !== 'application/pdf') {
-            alert('الملف يجب أن يكون بصيغة PDF فقط.');
-            return;
-        }
-
-        // حفظ المدخلات
-        localStorage.setItem('linkedinUrl', linkedinUrl);
-        localStorage.setItem('jobTitle', jobTitle);
-
-        searchBtn.disabled = true;
-        loadingDiv.classList.remove('hidden');
-        resultsDiv.innerHTML = '';
-        clearSection.classList.add('hidden');
-        loadingText.textContent = 'جاري استخراج النص من ملف السيرة الذاتية...';
-
-        try {
-            const profileText = await extractTextFromPDF(file);
-
-            if (!profileText || profileText.length < 50) {
-                throw new Error('لم يتمكن النظام من قراءة نص كافٍ من الملف. تأكد أن الملف يحتوي على نص واضح.');
-            }
-
-            loadingText.textContent = 'جاري تحليل السيرة الذاتية واقتراح الوظائف...';
-
-            const response = await fetch('/api/search', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    linkedinUrl,
-                    jobTitle,
-                    profileText
-                })
-            });
-
-            const text = await response.text();
-            let data;
-
-            try {
-                data = JSON.parse(text);
-            } catch (e) {
-                throw new Error('الخادم أرجع رداً غير متوقع: ' + text.substring(0, 120));
-            }
-
-            if (response.ok && data.result) {
-                resultsDiv.innerHTML = data.result;
-                
-                // حفظ النتائج
-                localStorage.setItem('jobResults', data.result);
-                clearSection.classList.remove('hidden');
-            } else {
-                resultsDiv.innerHTML = `
-                    <div class="bg-red-50 text-red-600 p-5 rounded-2xl text-center font-medium border border-red-100">
-                        ${data.error || 'حدث خطأ أثناء معالجة الطلب.'}
-                    </div>
-                `;
-            }
-        } catch (error) {
-            resultsDiv.innerHTML = `
-                <div class="bg-red-50 text-red-600 p-5 rounded-2xl text-center font-medium border border-red-100">
-                    حدث خطأ: ${error.message}
-                </div>
-            `;
-        } finally {
-            loadingDiv.classList.add('hidden');
-            searchBtn.disabled = false;
-        }
-    }
-
-    function clearResults() {
-        localStorage.removeItem('jobResults');
-        document.getElementById('results').innerHTML = '';
-        document.getElementById('clearSection').classList.add('hidden');
-    }
-</script>
-</body>
-</html>
+            
+            <
