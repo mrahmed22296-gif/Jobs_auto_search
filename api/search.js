@@ -21,10 +21,9 @@ export default async function handler(req, res) {
     }
 
     const models = [
-        'gemini-3.5-flash-lite',
-        'gemini-3.1-flash-lite',
-        'gemini-3.6-flash',
-        'gemini-3.5-flash'
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+        'gemini-1.5-pro'
     ];
 
     const jobTitleInstruction = jobTitle 
@@ -42,7 +41,9 @@ ${jobTitleInstruction}
 ${profileText}
 """
 
-قم بتحليل السيرة الذاتية بدقة واقتراح **8 وظائف** مناسبة جداً.
+استخدم أداة البحث المتاحة لديك للبحث الفعلي عن وظائف حقيقية منشورة حالياً على LinkedIn Jobs وBayt وWuzzuf وGoogle Jobs، تناسب هذه السيرة الذاتية في الكويت أو دول الخليج.
+
+قم بتحليل السيرة الذاتية بدقة واقتراح **8 وظائف** مناسبة جداً، بناءً على نتائج البحث الفعلية التي حصلت عليها (وليس روابط بحث عامة مبنية على تخمين).
 
 لكل وظيفة استخدم التنسيق التالي تماماً (HTML فقط بدون أي نص إضافي):
 
@@ -62,8 +63,9 @@ ${profileText}
 </div>
 
 تعليمات مهمة:
-- أنشئ روابط بحث حقيقية وفعالة (مثال: https://www.linkedin.com/jobs/search/?keywords=Chief%20Accountant&location=Egypt)
-- استخدم كلمات البحث المناسبة + مصر أو دول الخليج حسب الخبرات.
+- استخدم نتائج البحث الفعلية فقط. لا تختلق روابط أو أسماء وظائف غير موجودة.
+- إذا لم تجد وظيفة حقيقية منشورة مطابقة تماماً، استخدم رابط بحث بالكلمات المفتاحية كحل بديل فقط (مثال: https://www.linkedin.com/jobs/search/?keywords=Chief%20Accountant&location=Kuwait).
+- استخدم كلمات البحث المناسبة + الكويت أو دول الخليج حسب الخبرات.
 - لا تكتب أي نص خارج الـ HTML المطلوب.
 - رتب الوظائف من الأعلى توافقاً للأقل.
 `;
@@ -79,7 +81,8 @@ ${profileText}
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }]
+                            contents: [{ parts: [{ text: prompt }] }],
+                            tools: [{ google_search: {} }]
                         })
                     }
                 );
@@ -125,3 +128,4 @@ ${profileText}
         error: `كل الموديلات مشغولة حالياً. جرب بعد دقيقة. (آخر خطأ: ${lastError || 'غير معروف'})` 
     });
 }
+
