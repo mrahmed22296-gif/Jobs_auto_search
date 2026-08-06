@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>البحث الذكي عن الوظائف - DeepSeek</title>
+    <title>مساعد التوظيف الذكي</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Cairo', sans-serif; } </style>
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen py-10 px-4">
     <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
@@ -16,16 +18,25 @@
         <div class="space-y-5">
             <div>
                 <label class="block text-sm font-semibold mb-2">رابط ملف لينكدإن (LinkedIn Profile URL)</label>
-                <input type="url" id="linkedinUrl" placeholder="https://www.linkedin.com/in/username" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input 
+                    type="url" 
+                    id="linkedinUrl" 
+                    placeholder="https://www.linkedin.com/in/username" 
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
             </div>
-            <button onclick="searchJobs()" id="searchBtn" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition duration-200 shadow-md">
+            <button 
+                onclick="searchJobs()" 
+                id="searchBtn" 
+                class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition duration-200 shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+            >
                 ابحث عن الوظائف المناسبة
             </button>
         </div>
 
         <div id="loading" class="hidden text-center py-10">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-            <p class="mt-3 text-gray-600 font-medium">جاري تحليل الملف والبحث عن الوظائف عبر DeepSeek...</p>
+            <p class="mt-3 text-gray-600 font-medium">جاري تحليل الملف والبحث عن الوظائف المناسبة...</p>
         </div>
 
         <div id="results" class="mt-8 space-y-4"></div>
@@ -36,34 +47,57 @@ async function searchJobs() {
     const linkedinUrl = document.getElementById('linkedinUrl').value.trim();
     const resultsDiv = document.getElementById('results');
     const loadingDiv = document.getElementById('loading');
+    const searchBtn = document.getElementById('searchBtn');
 
     if (!linkedinUrl) {
         alert('الرجاء إدخال رابط لينكدإن.');
         return;
     }
 
+    // تعطيل الزر أثناء التحميل
+    searchBtn.disabled = true;
     loadingDiv.classList.remove('hidden');
     resultsDiv.innerHTML = '';
 
     try {
-        // الاتصال بالخادم الوسيط الخاص بك على Vercel
         const response = await fetch('/api/search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ linkedinUrl })
         });
 
-        const data = await response.json();
-        loadingDiv.classList.add('hidden');
+        // قراءة الرد كنص أولاً لتجنب أخطاء JSON
+        const text = await response.text();
+        let data;
+
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            throw new Error('الخادم أرجع رداً غير متوقع: ' + text.substring(0, 120));
+        }
 
         if (response.ok && data.result) {
-            resultsDiv.innerHTML = `<div class="p-6 bg-blue-50 rounded-xl border border-blue-200 leading-relaxed">${data.result}</div>`;
+            resultsDiv.innerHTML = `
+                <div class="p-6 bg-blue-50 rounded-xl border border-blue-200 leading-relaxed">
+                    ${data.result}
+                </div>
+            `;
         } else {
-            resultsDiv.innerHTML = `<p class="text-red-500 text-center font-medium">${data.error || 'حدث خطأ أثناء معالجة الطلب.'}</p>`;
+            resultsDiv.innerHTML = `
+                <p class="text-red-500 text-center font-medium">
+                    ${data.error || 'حدث خطأ أثناء معالجة الطلب.'}
+                </p>
+            `;
         }
     } catch (error) {
+        resultsDiv.innerHTML = `
+            <p class="text-red-500 text-center font-medium">
+                حدث خطأ في الاتصال: ${error.message}
+            </p>
+        `;
+    } finally {
         loadingDiv.classList.add('hidden');
-        resultsDiv.innerHTML = `<p class="text-red-500 text-center font-medium">حدث خطأ في الاتصال: ${error.message}</p>`;
+        searchBtn.disabled = false;
     }
 }
 </script>
