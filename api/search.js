@@ -5,7 +5,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { linkedinUrl, profileText } = req.body || {};
+    const { linkedinUrl, pdfBase64, fileName } = req.body || {};
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -14,9 +14,9 @@ export default async function handler(req, res) {
         });
     }
 
-    if (!profileText || profileText.trim().length < 40) {
+    if (!pdfBase64) {
         return res.status(400).json({ 
-            error: 'من فضلك الصق نص السيرة الذاتية أو ملخص الخبرات (على الأقل 40 حرف).' 
+            error: 'من فضلك ارفع ملف السيرة الذاتية بصيغة PDF.' 
         });
     }
 
@@ -30,16 +30,9 @@ export default async function handler(req, res) {
     const prompt = `
 أنت مساعد توظيف محترف وخبير تحليل سير ذاتية.
 
-بناءً على البيانات التالية:
+${linkedinUrl ? `رابط لينكدإن الخاص بالمرشح: ${linkedinUrl}\n\n` : ''}
 
-${linkedinUrl ? `رابط لينكدإن: ${linkedinUrl}\n\n` : ''}
-
-نص السيرة الذاتية / الخبرات / المهارات:
-"""
-${profileText}
-"""
-
-قم بتحليل السيرة الذاتية بدقة واقتراح 4 وظائف مناسبة جداً بناءً على الخبرات والمهارات الفعلية المذكورة فقط.
+قم بتحليل ملف السيرة الذاتية المرفق (PDF) بدقة عالية، ثم اقترح 4 وظائف مناسبة جداً بناءً على الخبرات والمهارات والتعليم الموجودين في الملف فقط.
 
 لكل وظيفة اذكر:
 - المسمى الوظيفي
@@ -49,6 +42,17 @@ ${profileText}
 
 قدم النتائج بتنسيق HTML نظيف ومرتب وواضح، بدون مقدمات طويلة.
 `;
+
+    // تجهيز الـ parts (نص + ملف PDF)
+    const parts = [
+        { text: prompt },
+        {
+            inline_data: {
+                mime_type: 'application/pdf',
+                data: pdfBase64
+            }
+        }
+    ];
 
     let lastError = null;
 
@@ -61,7 +65,7 @@ ${profileText}
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }]
+                            contents: [{ parts }]
                         })
                     }
                 );
