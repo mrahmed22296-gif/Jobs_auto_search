@@ -6,6 +6,8 @@
     <title>مساعد التوظيف الذكي</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- مكتبة استخراج النص من PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         body { font-family: 'Cairo', sans-serif; }
     </style>
@@ -43,7 +45,7 @@
                     accept=".pdf,application/pdf"
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 >
-                <p class="text-xs text-gray-400 mt-1">الحد الأقصى الموصى به: 10 ميجا</p>
+                <p class="text-xs text-gray-400 mt-1">يفضل أن يكون الملف أقل من 5 ميجا</p>
             </div>
 
             <button 
@@ -57,97 +59,109 @@
 
         <div id="loading" class="hidden text-center py-10">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-            <p class="mt-3 text-gray-600 font-medium">جاري قراءة ملف السيرة الذاتية وتحليلها...</p>
+            <p class="mt-3 text-gray-600 font-medium" id="loadingText">جاري قراءة ملف السيرة الذاتية...</p>
         </div>
 
         <div id="results" class="mt-8 space-y-4"></div>
     </div>
 
 <script>
-async function searchJobs() {
-    const linkedinUrl = document.getElementById('linkedinUrl').value.trim();
-    const fileInput = document.getElementById('pdfFile');
-    const resultsDiv = document.getElementById('results');
-    const loadingDiv = document.getElementById('loading');
-    const searchBtn = document.getElementById('searchBtn');
+    // إعداد pdf.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    if (!fileInput.files || fileInput.files.length === 0) {
-        alert('من فضلك اختر ملف السيرة الذاتية بصيغة PDF.');
-        return;
+    async function extractTextFromPDF(file) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        
+        let fullText = '';
+        
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            const pageText = content.items.map(item => item.str).join(' ');
+            fullText += pageText + '\n\n';
+        }
+        
+        return fullText.trim();
     }
 
-    const file = fileInput.files[0];
+    async function searchJobs() {
+        const linkedinUrl = document.getElementById('linkedinUrl').value.trim();
+        const fileInput = document.getElementById('pdfFile');
+        const resultsDiv = document.getElementById('results');
+        const loadingDiv = document.getElementById('loading');
+        const loadingText = document.getElementById('loadingText');
+        const searchBtn = document.getElementById('searchBtn');
 
-    if (file.type !== 'application/pdf') {
-        alert('الملف يجب أن يكون بصيغة PDF فقط.');
-        return;
-    }
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert('من فضلك اختر ملف السيرة الذاتية بصيغة PDF.');
+            return;
+        }
 
-    // تحويل الملف إلى Base64
-    const base64 = await fileToBase64(file);
+        const file = fileInput.files[0];
 
-    searchBtn.disabled = true;
-    loadingDiv.classList.remove('hidden');
-    resultsDiv.innerHTML = '';
+        if (file.type !== 'application/pdf') {
+            alert('الملف يجب أن يكون بصيغة PDF فقط.');
+            return;
+        }
 
-    try {
-        const response = await fetch('/api/search', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                linkedinUrl,
-                pdfBase64: base64,
-                fileName: file.name
-            })
-        });
-
-        const text = await response.text();
-        let data;
+        searchBtn.disabled = true;
+        loadingDiv.classList.remove('hidden');
+        resultsDiv.innerHTML = '';
+        loadingText.textContent = 'جاري استخراج النص من ملف السيرة الذاتية...';
 
         try {
-            data = JSON.parse(text);
-        } catch (e) {
-            throw new Error('الخادم أرجع رداً غير متوقع: ' + text.substring(0, 120));
-        }
+            // استخراج النص من الـ PDF
+            const profileText = await extractTextFromPDF(file);
 
-        if (response.ok && data.result) {
-            resultsDiv.innerHTML = `
-                <div class="p-6 bg-blue-50 rounded-xl border border-blue-200 leading-relaxed">
-                    ${data.result}
-                </div>
-            `;
-        } else {
+            if (!profileText || profileText.length < 50) {
+                throw new Error('لم يتمكن النظام من قراءة نص كافٍ من الملف. تأكد أن الملف يحتوي على نص واضح.');
+            }
+
+            loadingText.textContent = 'جاري تحليل السيرة الذاتية واقتراح الوظائف...';
+
+            const response = await fetch('/api/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    linkedinUrl,
+                    profileText
+                })
+            });
+
+            const text = await response.text();
+            let data;
+
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                throw new Error('الخادم أرجع رداً غير متوقع: ' + text.substring(0, 120));
+            }
+
+            if (response.ok && data.result) {
+                resultsDiv.innerHTML = `
+                    <div class="p-6 bg-blue-50 rounded-xl border border-blue-200 leading-relaxed">
+                        ${data.result}
+                    </div>
+                `;
+            } else {
+                resultsDiv.innerHTML = `
+                    <p class="text-red-500 text-center font-medium">
+                        ${data.error || 'حدث خطأ أثناء معالجة الطلب.'}
+                    </p>
+                `;
+            }
+        } catch (error) {
             resultsDiv.innerHTML = `
                 <p class="text-red-500 text-center font-medium">
-                    ${data.error || 'حدث خطأ أثناء معالجة الطلب.'}
+                    حدث خطأ: ${error.message}
                 </p>
             `;
+        } finally {
+            loadingDiv.classList.add('hidden');
+            searchBtn.disabled = false;
         }
-    } catch (error) {
-        resultsDiv.innerHTML = `
-            <p class="text-red-500 text-center font-medium">
-                حدث خطأ في الاتصال: ${error.message}
-            </p>
-        `;
-    } finally {
-        loadingDiv.classList.add('hidden');
-        searchBtn.disabled = false;
     }
-}
-
-// دالة تحويل الملف إلى Base64
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            // نشيل الجزء "data:application/pdf;base64,"
-            const base64 = reader.result.split(',')[1];
-            resolve(base64);
-        };
-        reader.onerror = error => reject(error);
-    });
-}
 </script>
 </body>
 </html>
