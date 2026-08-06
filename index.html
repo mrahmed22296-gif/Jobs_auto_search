@@ -6,7 +6,6 @@
     <title>مساعد التوظيف الذكي</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- مكتبة استخراج النص من PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         body { font-family: 'Cairo', sans-serif; }
@@ -16,7 +15,7 @@
     <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
         <h1 class="text-3xl font-bold text-center text-blue-600 mb-2">مساعد التوظيف الذكي</h1>
         <p class="text-center text-gray-500 mb-8">
-            ارفع ملف السيرة الذاتية (PDF) + رابط لينكدإن للحصول على اقتراحات وظائف دقيقة
+            ارفع ملف السيرة الذاتية (PDF) للحصول على اقتراحات وظائف دقيقة مع روابط التقديم
         </p>
         
         <div class="space-y-5">
@@ -29,6 +28,19 @@
                     type="url" 
                     id="linkedinUrl" 
                     placeholder="https://www.linkedin.com/in/username" 
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+
+            <!-- البحث باسم وظيفة -->
+            <div>
+                <label class="block text-sm font-semibold mb-2">
+                    البحث باسم وظيفة معينة <span class="text-gray-400 font-normal">(اختياري)</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="jobTitle" 
+                    placeholder="مثال: مدير مالي، محاسب، مراجع داخلي..." 
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
             </div>
@@ -66,7 +78,6 @@
     </div>
 
 <script>
-    // إعداد pdf.js
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
     async function extractTextFromPDF(file) {
@@ -87,6 +98,7 @@
 
     async function searchJobs() {
         const linkedinUrl = document.getElementById('linkedinUrl').value.trim();
+        const jobTitle = document.getElementById('jobTitle').value.trim();
         const fileInput = document.getElementById('pdfFile');
         const resultsDiv = document.getElementById('results');
         const loadingDiv = document.getElementById('loading');
@@ -111,7 +123,6 @@
         loadingText.textContent = 'جاري استخراج النص من ملف السيرة الذاتية...';
 
         try {
-            // استخراج النص من الـ PDF
             const profileText = await extractTextFromPDF(file);
 
             if (!profileText || profileText.length < 50) {
@@ -125,6 +136,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     linkedinUrl,
+                    jobTitle,
                     profileText
                 })
             });
