@@ -85,20 +85,40 @@
                 <p style="margin: 0; font-size: 12px; color: #92400e; line-height: 1.7;">
                     1. امسح الرمز وادفع <strong>1 دينار</strong><br>
                     2. خذ صورة لإيصال التحويل<br>
-                    3. أرسل الصورة على واتساب لتفعيل الاشتراك
+                    3. أرسل الصورة على واتساب<br>
+                    4. سنرسل لك <strong>كود التفعيل</strong>
                 </p>
             </div>
 
             <button onclick="contactWhatsApp()"
-                style="width: 100%; background: #25D366; color: white; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                style="width: 100%; background: #25D366; color: white; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                 </svg>
                 إرسال إيصال الدفع على واتساب
             </button>
 
+            <!-- قسم كود التفعيل -->
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 8px;">
+                <p style="font-size: 13px; font-weight: 600; color: #334155; margin: 0 0 10px 0;">لديك كود تفعيل؟</p>
+                
+                <input 
+                    type="text" 
+                    id="activationCode" 
+                    placeholder="أدخل كود التفعيل هنا"
+                    style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 15px; text-align: center; outline: none; margin-bottom: 10px;"
+                >
+                
+                <button onclick="activateCode()"
+                    style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 14px; border: none; cursor: pointer;">
+                    تفعيل الاشتراك
+                </button>
+                
+                <p id="activateMessage" style="font-size: 13px; margin-top: 10px; display: none;"></p>
+            </div>
+
             <button onclick="backToApp()"
-                style="width: 100%; background: transparent; color: #64748b; padding: 10px; border-radius: 14px; font-weight: 500; font-size: 13px; border: none; cursor: pointer;">
+                style="width: 100%; background: transparent; color: #64748b; padding: 10px; border-radius: 14px; font-weight: 500; font-size: 13px; border: none; cursor: pointer; margin-top: 8px;">
                 العودة لاحقاً
             </button>
         </div>
@@ -125,6 +145,11 @@
 
         <main style="max-width: 900px; margin: 0 auto; padding: 32px 16px;">
             
+            <!-- شارة المشترك -->
+            <div id="subscribedBadge" style="display: none; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 10px 16px; border-radius: 12px; margin-bottom: 16px; text-align: center; font-size: 13px; font-weight: 600;">
+                ✓ أنت مشترك - بحث غير محدود
+            </div>
+
             <div style="background: white; border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08); padding: 28px; margin-bottom: 32px; border: 1px solid #f1f5f9;">
                 <div style="display: flex; flex-direction: column; gap: 20px;">
                     
@@ -198,6 +223,21 @@
     const auth = firebase.auth();
     let currentUser = null;
 
+    // ====================== أكواد التفعيل الصالحة ======================
+    // ←←← أضف أو عدّل الأكواد من هنا
+    const VALID_CODES = [
+        "JOB2026-A1B2",
+        "JOB2026-C3D4",
+        "JOB2026-E5F6",
+        "JOB2026-G7H8",
+        "JOB2026-I9J0",
+        "WAMD-1001",
+        "WAMD-1002",
+        "WAMD-1003",
+        "WAMD-1004",
+        "WAMD-1005"
+    ];
+
     // ====================== Auth ======================
     auth.onAuthStateChanged((user) => {
         currentUser = user;
@@ -216,6 +256,9 @@
                 photo.src = user.photoURL;
                 photo.style.display = 'block';
             }
+
+            // إظهار شارة المشترك لو مفعّل
+            updateSubscribedBadge();
         } else {
             loginScreen.style.display = 'flex';
             appScreen.style.display = 'none';
@@ -251,7 +294,53 @@
         });
     }
 
-    // ====================== Free Search Limit ======================
+    // ====================== نظام الاشتراك وكود التفعيل ======================
+    
+    // جلب قائمة الأكواد المستخدمة
+    function getUsedCodes() {
+        try {
+            return JSON.parse(localStorage.getItem('usedActivationCodes') || '[]');
+        } catch (e) {
+            return [];
+        }
+    }
+
+    // حفظ كود كمستخدم
+    function markCodeAsUsed(code) {
+        const used = getUsedCodes();
+        if (!used.includes(code)) {
+            used.push(code);
+            localStorage.setItem('usedActivationCodes', JSON.stringify(used));
+        }
+    }
+
+    // هل الكود مستخدم من قبل؟
+    function isCodeUsed(code) {
+        return getUsedCodes().includes(code);
+    }
+
+    function isSubscribed() {
+        if (!currentUser) return false;
+        // التفعيل مربوط بحساب جوجل فقط (UID)
+        return localStorage.getItem(`subscribed_${currentUser.uid}`) === 'true';
+    }
+
+    function setSubscribed(code) {
+        if (!currentUser) return;
+        // تفعيل الحساب الحالي فقط
+        localStorage.setItem(`subscribed_${currentUser.uid}`, 'true');
+        // تسجيل الكود كمستخدم حتى لا يستخدمه أحد آخر
+        if (code) markCodeAsUsed(code);
+        updateSubscribedBadge();
+    }
+
+    function updateSubscribedBadge() {
+        const badge = document.getElementById('subscribedBadge');
+        if (badge) {
+            badge.style.display = isSubscribed() ? 'block' : 'none';
+        }
+    }
+
     function getSearchCount() {
         if (!currentUser) return 0;
         return parseInt(localStorage.getItem(`searchCount_${currentUser.uid}`) || '0');
@@ -264,12 +353,17 @@
     }
 
     function hasFreeSearch() {
+        // لو مشترك → مسموح دائماً
+        if (isSubscribed()) return true;
+        // لو مش مشترك → محاولة واحدة فقط
         return getSearchCount() < 1;
     }
 
     function showSubscribeScreen() {
         document.getElementById('appScreen').style.display = 'none';
         document.getElementById('subscribeScreen').style.display = 'flex';
+        document.getElementById('activateMessage').style.display = 'none';
+        document.getElementById('activationCode').value = '';
     }
 
     function backToApp() {
@@ -277,9 +371,58 @@
         document.getElementById('appScreen').style.display = 'block';
     }
 
+    function activateCode() {
+        const codeInput = document.getElementById('activationCode');
+        const messageEl = document.getElementById('activateMessage');
+        const code = (codeInput.value || '').trim().toUpperCase();
+
+        if (!code) {
+            messageEl.style.display = 'block';
+            messageEl.style.color = '#ef4444';
+            messageEl.textContent = 'من فضلك أدخل كود التفعيل';
+            return;
+        }
+
+        // 1. التحقق أن الكود موجود في القائمة
+        if (!VALID_CODES.includes(code)) {
+            messageEl.style.display = 'block';
+            messageEl.style.color = '#ef4444';
+            messageEl.textContent = 'كود التفعيل غير صحيح.';
+            return;
+        }
+
+        // 2. التحقق أن الكود لم يُستخدم من قبل
+        if (isCodeUsed(code)) {
+            messageEl.style.display = 'block';
+            messageEl.style.color = '#ef4444';
+            messageEl.textContent = 'هذا الكود تم استخدامه مسبقاً ولا يمكن استخدامه مرة أخرى.';
+            return;
+        }
+
+        // 3. التحقق أن الحساب الحالي غير مفعل أصلاً
+        if (isSubscribed()) {
+            messageEl.style.display = 'block';
+            messageEl.style.color = '#10b981';
+            messageEl.textContent = 'حسابك مفعل بالفعل!';
+            return;
+        }
+
+        // 4. تفعيل الحساب + تعليم الكود كمستخدم
+        setSubscribed(code);
+        
+        messageEl.style.display = 'block';
+        messageEl.style.color = '#10b981';
+        messageEl.textContent = '✓ تم تفعيل الاشتراك بنجاح! جاري التحويل...';
+        
+        setTimeout(() => {
+            backToApp();
+            updateSubscribedBadge();
+        }, 1500);
+    }
+
     function contactWhatsApp() {
         // ←←← غيّر الرقم ده لرقم واتسابك (مع كود الكويت 965)
-        const phone = "96560085043"; 
+        const phone = "965XXXXXXXX"; 
         const email = currentUser?.email || '';
         const name = currentUser?.displayName || '';
         
@@ -378,7 +521,11 @@
             }
 
             if (response.ok && data.result) {
-                incrementSearchCount();
+                // نزود العداد فقط لو مش مشترك
+                if (!isSubscribed()) {
+                    incrementSearchCount();
+                }
+
                 resultsDiv.innerHTML = data.result;
                 localStorage.setItem('jobResults', data.result);
                 clearSection.style.display = 'block';
