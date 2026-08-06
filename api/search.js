@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     ];
 
     const jobTitleInstruction = jobTitle 
-        ? `\nالمستخدم يريد التركيز على الوظائف المتعلقة بـ: "${jobTitle}". أعطِ أولوية عالية لهذه الوظيفة أو الوظائف المشابهة لها جداً.`
+        ? `\nالمستخدم يريد التركيز على الوظائف المتعلقة بـ: "${jobTitle}". أعطِ أولوية عالية لهذه الوظيفة أو الوظائف المشابهة لها.`
         : '';
 
     const prompt = `
@@ -42,27 +42,30 @@ ${jobTitleInstruction}
 ${profileText}
 """
 
-قم بتحليل السيرة الذاتية بدقة واقتراح 4 وظائف مناسبة جداً.
+قم بتحليل السيرة الذاتية بدقة واقتراح **8 وظائف** مناسبة جداً.
 
-لكل وظيفة اكتب بالتنسيق التالي تماماً (HTML):
+لكل وظيفة استخدم التنسيق التالي تماماً (HTML فقط بدون أي نص إضافي):
 
-<div style="border:1px solid #e5e7eb; border-radius:12px; padding:16px; margin-bottom:16px; background:white;">
-  <h3 style="margin:0 0 8px 0; color:#1e40af;">1. المسمى الوظيفي</h3>
-  <p><strong>نسبة التوافق:</strong> XX%</p>
-  <p><strong>المهارات المتوافقة:</strong> ...</p>
-  <p><strong>سبب الترشيح:</strong> ...</p>
-  <p style="margin-top:12px;">
-    <strong>روابط التقديم المباشر:</strong><br>
-    • <a href="رابط لينكدإن جوبس" target="_blank" style="color:#2563eb;">LinkedIn Jobs</a><br>
-    • <a href="رابط ويزاف أو بيت.كوم" target="_blank" style="color:#2563eb;">Wuzzuf / Bayt</a><br>
-    • <a href="رابط جوجل جوبس" target="_blank" style="color:#2563eb;">Google Jobs</a>
-  </p>
+<div class="bg-white rounded-2xl border border-slate-200 p-5 mb-4 shadow-sm">
+  <div class="flex items-start justify-between gap-3 mb-3">
+    <h3 class="text-lg font-bold text-indigo-700 m-0">1. المسمى الوظيفي</h3>
+    <span class="bg-emerald-100 text-emerald-700 text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap">XX%</span>
+  </div>
+  <p class="text-sm text-slate-600 mb-2"><strong class="text-slate-800">المهارات المتوافقة:</strong> ...</p>
+  <p class="text-sm text-slate-600 mb-4"><strong class="text-slate-800">سبب الترشيح:</strong> ...</p>
+  <div class="flex flex-wrap gap-2">
+    <a href="رابط_لينكدإن" target="_blank" class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg font-medium hover:bg-blue-100 transition">LinkedIn Jobs</a>
+    <a href="رابط_ويزاف" target="_blank" class="text-xs bg-purple-50 text-purple-700 px-3 py-1.5 rounded-lg font-medium hover:bg-purple-100 transition">Wuzzuf</a>
+    <a href="رابط_بيت" target="_blank" class="text-xs bg-orange-50 text-orange-700 px-3 py-1.5 rounded-lg font-medium hover:bg-orange-100 transition">Bayt</a>
+    <a href="رابط_جوجل" target="_blank" class="text-xs bg-green-50 text-green-700 px-3 py-1.5 rounded-lg font-medium hover:bg-green-100 transition">Google Jobs</a>
+  </div>
 </div>
 
-مهم جداً:
-- أنشئ روابط بحث حقيقية وفعالة (مثال: https://www.linkedin.com/jobs/search/?keywords=Chief%20Accountant)
-- استخدم كلمات البحث المناسبة للوظيفة + مصر أو الخليج حسب الخبرات.
+تعليمات مهمة:
+- أنشئ روابط بحث حقيقية وفعالة (مثال: https://www.linkedin.com/jobs/search/?keywords=Chief%20Accountant&location=Egypt)
+- استخدم كلمات البحث المناسبة + مصر أو دول الخليج حسب الخبرات.
 - لا تكتب أي نص خارج الـ HTML المطلوب.
+- رتب الوظائف من الأعلى توافقاً للأقل.
 `;
 
     let lastError = null;
