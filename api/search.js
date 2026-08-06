@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-    // تأكد إن الرد دائماً JSON
     res.setHeader('Content-Type', 'application/json');
 
     if (req.method !== 'POST') {
@@ -10,7 +9,7 @@ export default async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'مفتاح الـ API غير مُعرّف في إعدادات Vercel (Environment Variables).' });
+        return res.status(500).json({ error: 'مفتاح الـ API غير مُعرّف في إعدادات Vercel.' });
     }
 
     if (!linkedinUrl) {
@@ -19,7 +18,7 @@ export default async function handler(req, res) {
 
     try {
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`,
             {
                 method: 'POST',
                 headers: {
