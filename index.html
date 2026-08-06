@@ -14,7 +14,7 @@
     <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
         <h1 class="text-3xl font-bold text-center text-blue-600 mb-2">مساعد التوظيف الذكي</h1>
         <p class="text-center text-gray-500 mb-8">
-            أدخل رابط لينكدإن + نص السيرة الذاتية للحصول على اقتراحات وظائف دقيقة
+            ارفع ملف السيرة الذاتية (PDF) + رابط لينكدإن للحصول على اقتراحات وظائف دقيقة
         </p>
         
         <div class="space-y-5">
@@ -31,21 +31,19 @@
                 >
             </div>
 
-            <!-- نص السيرة الذاتية -->
+            <!-- رفع ملف PDF -->
             <div>
                 <label class="block text-sm font-semibold mb-2">
-                    نص السيرة الذاتية / الخبرات والمهارات
+                    رفع ملف السيرة الذاتية (PDF)
                     <span class="text-red-500">*</span>
                 </label>
-                <textarea 
-                    id="profileText" 
-                    rows="9"
-                    placeholder="الصق هنا نص السيرة الذاتية أو ملخص الخبرات والمهارات والتعليم من لينكدإن أو ملف PDF..."
-                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
-                ></textarea>
-                <p class="text-xs text-gray-400 mt-1">
-                    كلما كان النص أدق وأشمل، كانت اقتراحات الوظائف أفضل
-                </p>
+                <input 
+                    type="file" 
+                    id="pdfFile" 
+                    accept=".pdf,application/pdf"
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                >
+                <p class="text-xs text-gray-400 mt-1">الحد الأقصى الموصى به: 10 ميجا</p>
             </div>
 
             <button 
@@ -59,7 +57,7 @@
 
         <div id="loading" class="hidden text-center py-10">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-            <p class="mt-3 text-gray-600 font-medium">جاري تحليل السيرة الذاتية واقتراح الوظائف المناسبة...</p>
+            <p class="mt-3 text-gray-600 font-medium">جاري قراءة ملف السيرة الذاتية وتحليلها...</p>
         </div>
 
         <div id="results" class="mt-8 space-y-4"></div>
@@ -68,15 +66,25 @@
 <script>
 async function searchJobs() {
     const linkedinUrl = document.getElementById('linkedinUrl').value.trim();
-    const profileText = document.getElementById('profileText').value.trim();
+    const fileInput = document.getElementById('pdfFile');
     const resultsDiv = document.getElementById('results');
     const loadingDiv = document.getElementById('loading');
     const searchBtn = document.getElementById('searchBtn');
 
-    if (!profileText || profileText.length < 40) {
-        alert('من فضلك الصق نص السيرة الذاتية أو ملخص الخبرات (على الأقل 40 حرف).');
+    if (!fileInput.files || fileInput.files.length === 0) {
+        alert('من فضلك اختر ملف السيرة الذاتية بصيغة PDF.');
         return;
     }
+
+    const file = fileInput.files[0];
+
+    if (file.type !== 'application/pdf') {
+        alert('الملف يجب أن يكون بصيغة PDF فقط.');
+        return;
+    }
+
+    // تحويل الملف إلى Base64
+    const base64 = await fileToBase64(file);
 
     searchBtn.disabled = true;
     loadingDiv.classList.remove('hidden');
@@ -86,7 +94,11 @@ async function searchJobs() {
         const response = await fetch('/api/search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ linkedinUrl, profileText })
+            body: JSON.stringify({
+                linkedinUrl,
+                pdfBase64: base64,
+                fileName: file.name
+            })
         });
 
         const text = await response.text();
@@ -121,6 +133,20 @@ async function searchJobs() {
         loadingDiv.classList.add('hidden');
         searchBtn.disabled = false;
     }
+}
+
+// دالة تحويل الملف إلى Base64
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            // نشيل الجزء "data:application/pdf;base64,"
+            const base64 = reader.result.split(',')[1];
+            resolve(base64);
+        };
+        reader.onerror = error => reject(error);
+    });
 }
 </script>
 </body>
