@@ -5,7 +5,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { linkedinUrl, profileText } = req.body || {};
+    const { linkedinUrl, jobTitle, profileText } = req.body || {};
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -27,25 +27,42 @@ export default async function handler(req, res) {
         'gemini-3.5-flash'
     ];
 
+    const jobTitleInstruction = jobTitle 
+        ? `\nالمستخدم يريد التركيز على الوظائف المتعلقة بـ: "${jobTitle}". أعطِ أولوية عالية لهذه الوظيفة أو الوظائف المشابهة لها جداً.`
+        : '';
+
     const prompt = `
 أنت مساعد توظيف محترف وخبير تحليل سير ذاتية.
 
-${linkedinUrl ? `رابط لينكدإن: ${linkedinUrl}\n\n` : ''}
+${linkedinUrl ? `رابط لينكدإن: ${linkedinUrl}\n` : ''}
+${jobTitleInstruction}
 
-نص السيرة الذاتية المستخرج:
+نص السيرة الذاتية:
 """
 ${profileText}
 """
 
-قم بتحليل السيرة الذاتية بدقة واقتراح 4 وظائف مناسبة جداً بناءً على الخبرات والمهارات والتعليم الموجودين فقط.
+قم بتحليل السيرة الذاتية بدقة واقتراح 4 وظائف مناسبة جداً.
 
-لكل وظيفة اذكر:
-- المسمى الوظيفي
-- نسبة التوافق التقريبية (%)
-- المهارات المتوافقة من السيرة الذاتية
-- سبب الترشيح باختصار ووضوح
+لكل وظيفة اكتب بالتنسيق التالي تماماً (HTML):
 
-قدم النتائج بتنسيق HTML نظيف ومرتب وواضح، بدون مقدمات طويلة.
+<div style="border:1px solid #e5e7eb; border-radius:12px; padding:16px; margin-bottom:16px; background:white;">
+  <h3 style="margin:0 0 8px 0; color:#1e40af;">1. المسمى الوظيفي</h3>
+  <p><strong>نسبة التوافق:</strong> XX%</p>
+  <p><strong>المهارات المتوافقة:</strong> ...</p>
+  <p><strong>سبب الترشيح:</strong> ...</p>
+  <p style="margin-top:12px;">
+    <strong>روابط التقديم المباشر:</strong><br>
+    • <a href="رابط لينكدإن جوبس" target="_blank" style="color:#2563eb;">LinkedIn Jobs</a><br>
+    • <a href="رابط ويزاف أو بيت.كوم" target="_blank" style="color:#2563eb;">Wuzzuf / Bayt</a><br>
+    • <a href="رابط جوجل جوبس" target="_blank" style="color:#2563eb;">Google Jobs</a>
+  </p>
+</div>
+
+مهم جداً:
+- أنشئ روابط بحث حقيقية وفعالة (مثال: https://www.linkedin.com/jobs/search/?keywords=Chief%20Accountant)
+- استخدم كلمات البحث المناسبة للوظيفة + مصر أو الخليج حسب الخبرات.
+- لا تكتب أي نص خارج الـ HTML المطلوب.
 `;
 
     let lastError = null;
