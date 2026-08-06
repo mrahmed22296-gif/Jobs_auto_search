@@ -5,80 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مساعد التوظيف الذكي</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         body { font-family: 'Cairo', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15);
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen py-10 px-4">
-    <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
-        <h1 class="text-3xl font-bold text-center text-blue-600 mb-2">مساعد التوظيف الذكي</h1>
-        <p class="text-center text-gray-500 mb-8">
-            ارفع ملف السيرة الذاتية (PDF) للحصول على اقتراحات وظائف دقيقة مع روابط التقديم
-        </p>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-8 px-4 shadow-lg">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold mb-2">مساعد التوظيف الذكي</h1>
+            <p class="text-indigo-100 text-sm md:text-base opacity-90">
+                ارفع سيرتك الذاتية واحصل على وظائف مناسبة مع روابط التقديم المباشر
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8">
         
-        <div class="space-y-5">
-            <!-- رابط لينكدإن -->
-            <div>
-                <label class="block text-sm font-semibold mb-2">
-                    رابط ملف لينكدإن <span class="text-gray-400 font-normal">(اختياري)</span>
-                </label>
-                <input 
-                    type="url" 
-                    id="linkedinUrl" 
-                    placeholder="https://www.linkedin.com/in/username" 
-                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-            </div>
+        <!-- Form Card -->
+        <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8 mb-8 border border-slate-100">
+            <div class="space-y-6">
+                
+                <!-- LinkedIn -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        رابط لينكدإن <span class="text-slate-400 font-normal">(اختياري)</span>
+                    </label>
+                    <input 
+                        type="url" 
+                        id="linkedinUrl" 
+                        placeholder="https://www.linkedin.com/in/username" 
+                        class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-slate-50"
+                    >
+                </div>
 
-            <!-- البحث باسم وظيفة -->
-            <div>
-                <label class="block text-sm font-semibold mb-2">
-                    البحث باسم وظيفة معينة <span class="text-gray-400 font-normal">(اختياري)</span>
-                </label>
-                <input 
-                    type="text" 
-                    id="jobTitle" 
-                    placeholder="مثال: مدير مالي، محاسب، مراجع داخلي..." 
-                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-            </div>
+                <!-- Job Title Search -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        البحث باسم وظيفة معينة <span class="text-slate-400 font-normal">(اختياري)</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="jobTitle" 
+                        placeholder="مثال: مدير مالي، محاسب أول، مراجع داخلي..." 
+                        class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition bg-slate-50"
+                    >
+                </div>
 
-            <!-- رفع ملف PDF -->
-            <div>
-                <label class="block text-sm font-semibold mb-2">
-                    رفع ملف السيرة الذاتية (PDF)
-                    <span class="text-red-500">*</span>
-                </label>
-                <input 
-                    type="file" 
-                    id="pdfFile" 
-                    accept=".pdf,application/pdf"
-                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                >
-                <p class="text-xs text-gray-400 mt-1">يفضل أن يكون الملف أقل من 5 ميجا</p>
-            </div>
+                <!-- PDF Upload -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        رفع ملف السيرة الذاتية (PDF)
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="file" 
+                            id="pdfFile" 
+                            accept=".pdf,application/pdf"
+                            class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition bg-slate-50 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                        >
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">يفضل أن يكون الملف أقل من 5 ميجا</p>
+                </div>
 
-            <button 
-                onclick="searchJobs()" 
-                id="searchBtn" 
-                class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition duration-200 shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-                ابحث عن الوظائف المناسبة
+                <!-- Search Button -->
+                <button 
+                    onclick="searchJobs()" 
+                    id="searchBtn" 
+                    class="w-full gradient-bg text-white py-4 rounded-2xl font-bold text-lg hover:opacity-90 transition duration-200 shadow-lg shadow-indigo-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                    ابحث عن الوظائف المناسبة
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="hidden text-center py-16">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent"></div>
+            <p class="mt-4 text-slate-600 font-medium" id="loadingText">جاري قراءة ملف السيرة الذاتية...</p>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="space-y-4"></div>
+
+        <!-- Clear Results Button -->
+        <div id="clearSection" class="hidden mt-6 text-center">
+            <button onclick="clearResults()" class="text-sm text-slate-500 hover:text-red-500 transition underline">
+                مسح النتائج
             </button>
         </div>
+    </main>
 
-        <div id="loading" class="hidden text-center py-10">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-            <p class="mt-3 text-gray-600 font-medium" id="loadingText">جاري قراءة ملف السيرة الذاتية...</p>
-        </div>
-
-        <div id="results" class="mt-8 space-y-4"></div>
-    </div>
+    <footer class="text-center text-slate-400 text-sm py-8">
+        مساعد التوظيف الذكي © 2026
+    </footer>
 
 <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    // استرجاع البيانات المحفوظة عند تحميل الصفحة
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedResults = localStorage.getItem('jobResults');
+        const savedLinkedin = localStorage.getItem('linkedinUrl');
+        const savedJobTitle = localStorage.getItem('jobTitle');
+
+        if (savedLinkedin) document.getElementById('linkedinUrl').value = savedLinkedin;
+        if (savedJobTitle) document.getElementById('jobTitle').value = savedJobTitle;
+
+        if (savedResults) {
+            document.getElementById('results').innerHTML = savedResults;
+            document.getElementById('clearSection').classList.remove('hidden');
+        }
+    });
 
     async function extractTextFromPDF(file) {
         const arrayBuffer = await file.arrayBuffer();
@@ -104,6 +156,7 @@
         const loadingDiv = document.getElementById('loading');
         const loadingText = document.getElementById('loadingText');
         const searchBtn = document.getElementById('searchBtn');
+        const clearSection = document.getElementById('clearSection');
 
         if (!fileInput.files || fileInput.files.length === 0) {
             alert('من فضلك اختر ملف السيرة الذاتية بصيغة PDF.');
@@ -117,9 +170,14 @@
             return;
         }
 
+        // حفظ المدخلات
+        localStorage.setItem('linkedinUrl', linkedinUrl);
+        localStorage.setItem('jobTitle', jobTitle);
+
         searchBtn.disabled = true;
         loadingDiv.classList.remove('hidden');
         resultsDiv.innerHTML = '';
+        clearSection.classList.add('hidden');
         loadingText.textContent = 'جاري استخراج النص من ملف السيرة الذاتية...';
 
         try {
@@ -151,28 +209,34 @@
             }
 
             if (response.ok && data.result) {
-                resultsDiv.innerHTML = `
-                    <div class="p-6 bg-blue-50 rounded-xl border border-blue-200 leading-relaxed">
-                        ${data.result}
-                    </div>
-                `;
+                resultsDiv.innerHTML = data.result;
+                
+                // حفظ النتائج
+                localStorage.setItem('jobResults', data.result);
+                clearSection.classList.remove('hidden');
             } else {
                 resultsDiv.innerHTML = `
-                    <p class="text-red-500 text-center font-medium">
+                    <div class="bg-red-50 text-red-600 p-5 rounded-2xl text-center font-medium border border-red-100">
                         ${data.error || 'حدث خطأ أثناء معالجة الطلب.'}
-                    </p>
+                    </div>
                 `;
             }
         } catch (error) {
             resultsDiv.innerHTML = `
-                <p class="text-red-500 text-center font-medium">
+                <div class="bg-red-50 text-red-600 p-5 rounded-2xl text-center font-medium border border-red-100">
                     حدث خطأ: ${error.message}
-                </p>
+                </div>
             `;
         } finally {
             loadingDiv.classList.add('hidden');
             searchBtn.disabled = false;
         }
+    }
+
+    function clearResults() {
+        localStorage.removeItem('jobResults');
+        document.getElementById('results').innerHTML = '';
+        document.getElementById('clearSection').classList.add('hidden');
     }
 </script>
 </body>
