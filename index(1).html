@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f4f4a" />
+    <title>مسار | بحث وظائف LinkedIn</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <style>
+      :root {
+        --ink: #18333a;
+        --teal: #176b64;
+        --teal-dark: #0f4f4a;
+        --paper: #f6f3eb;
+        --line: #d8ddd7;
+        --orange: #d95d39;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Cairo", sans-serif;
+      }
+      h1,
+      h2,
+      h3,
+      .brand {
+        font-family: "Alexandria", sans-serif;
+      }
+      button {
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease,
+          background 0.15s ease;
+      }
+      button:active {
+        transform: scale(0.98);
+      }
+      .path-dots {
+        background-image: radial-gradient(#91a49a 1px, transparent 1px);
+        background-size: 10px 10px;
+      }
+      .route-line {
+        height: 1px;
+        border-top: 1px dashed #9eb2a8;
+        flex: 1;
+        min-width: 20px;
+      }
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid #9fb1a8;
+        background: #f6f3eb;
+      }
+      .status-dot.done {
+        border-color: var(--orange);
+        background: var(--orange);
+        box-shadow: 0 0 0 4px rgba(217, 93, 57, 0.12);
+      }
+      .modal-backdrop {
+        background: rgba(17, 40, 44, 0.48);
+        backdrop-filter: blur(5px);
+      }
+    </style>
+  </head>
+  <body>
+    <section
+      id="loginScreen"
+      class="min-h-screen px-4 flex items-center justify-center"
+    >
+      <div
+        class="w-full max-w-md bg-[#fffdf8] border border-[#d8ddd7] rounded-[28px] p-8 shadow-2xl shadow-[#18333a]/10 text-center"
+      >
+        <div
+          class="w-16 h-16 mx-auto mb-5 bg-[#18333a] text-white rounded-2xl grid place-items-center text-2xl font-bold"
+        >
+          ↗
+        </div>
+        <p class="text-[#176b64] text-xs font-bold tracking-wide">
+          منظّم البحث والتقديم
+        </p>
+        <h1 class="text-2xl font-extrabold mt-2 mb-3">مسار وظيفي أوضح</h1>
+        <p class="text-sm text-slate-500 leading-7 mb-7">
+          ابحث عن الوظائف في LinkedIn، ثم احتفظ بالفرص وحالات التقديم في مكان
+          واحد.
+        </p>
+        <button
+          id="googleBtn"
+          type="button"
+          class="w-full min-h-12 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-sm flex justify-center items-center gap-3 hover:border-[#176b64]"
+          onclick="loginWithGoogle()"
+        >
+          <span
+            class="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 via-red-500 to-yellow-400"
+          ></span>
+          تسجيل الدخول بواسطة Google
+        </button>
+        <button
+          type="button"
+          class="mt-4 text-sm text-[#176b64] underline underline-offset-4"
+          onclick="continueWithoutAccount()"
+        >
+          الاستمرار بدون حساب
+        </button>
+        <p id="loginError" class="hidden mt-4 text-xs text-red-600"></p>
+      </div>
+    </section>
+
+    <div id="appScreen" class="hidden min-h-screen">
+      <header
+        class="sticky top-0 z-30 bg-[#f6f3eb]/90 backdrop-blur border-b border-[#d8ddd7]"
+      >
+        <div
+          class="max-w-7xl mx-auto px-5 h-[72px] flex items-center justify-between"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-xl bg-[#18333a] text-white grid place-items-center font-extrabold"
+            >
+              ↗
+            </div>
+            <div>
+              <p class="brand m-0 text-lg font-extrabold">مسار</p>
+              <p class="m-0 text-[10px] text-slate-500">البحث والتقديم بوضوح</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="hidden sm:block text-left">
+              <p id="userName" class="m-0 text-xs font-bold"></p>
+              <p class="m-0 text-[10px] text-slate-500">منظّم التقديم الشخصي</p>
+            </div>
+            <button
+              id="logoutBtn"
+              type="button"
+              onclick="logout()"
+              class="text-xs text-slate-500 hover:text-[#176b64]"
+            >
+              تسجيل الخروج
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main
+        class="max-w-7xl mx-auto px-5 py-8 grid lg:grid-cols-[185px_minmax(0,1fr)_255px] gap-8"
+        dir="rtl"
+      >
+        <aside class="hidden lg:block">
+          <p class="text-[11px] font-bold text-[#59726b] tracking-wide mb-3">
+            مساحة العمل
+          </p>
+          <nav class="space-y-1">
+            <button
+              type="button"
+              onclick="setView('search')"
+              data-view="search"
+              class="view-btn w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-right bg-[#e4eee8] text-[#176b64]"
+            >
+              ⌕ <span>بحث الوظائف</span>
+            </button>
+            <button
+              type="button"
+              onclick="setView('applications')"
+              data-view="applications"
+              class="view-btn w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-right text-slate-500 hover:bg-white"
+            >
+              ▣ <span>طلبات التقديم</span
+              ><span
+                id="navCount"
+                class="mr-auto bg-[#d95d39] text-white rounded-full text-[10px] px-2 py-0.5 hidden"
+                >0</span
+              >
+            </button>
+          </nav>
+          <div class="mt-8 pr-3 border-r border-dashed border-[#9eb2a8]">
+            <p class="text-[10px] font-bold text-slate-500 mb-3">رحلتك الآن</p>
+            <div class="space-y-4 text-[11px] font-bold text-slate-400">
+              <p class="m-0 text-[#176b64]">
+                <span
+                  class="inline-block w-2 h-2 bg-[#d95d39] rounded-full ml-2"
+                ></span
+                >١. حدد وجهتك
+              </p>
+              <p class="m-0">٢. راجع الإعلان</p>
+              <p class="m-0">٣. ثبّت التقديم</p>
+            </div>
+          </div>
+          <p
+            class="mt-8 p-3 border border-[#d8ddd7] text-[11px] leading-6 text-slate-500 bg-white/60"
+          >
+            لا يجمع الموقع بيانات من LinkedIn ولا يقدّم بالنيابة عنك. تفتح
+            الروابط المصدر لتكمل الخطوات بنفسك.
+          </p>
+        </aside>
+
+        <section id="searchView">
+          <p class="text-[11px] text-[#176b64] font-bold tracking-wide mb-3">
+            <span
+              class="inline-block h-px w-6 bg-[#d95d39] align-middle ml-2"
+            ></span>
+            نقطة البداية
+          </p>
+          <h1
+            class="text-4xl sm:text-5xl font-extrabold leading-[1.35] tracking-tight m-0"
+          >
+            ابحث بوعي،<br /><span class="text-[#176b64]">وقدّم بثقة.</span>
+          </h1>
+          <p class="max-w-xl mt-4 text-sm leading-8 text-slate-500">
+            يمكنك فتح بحث LinkedIn مضبوطاً بكلماتك وموقعك، أو رفع السيرة الذاتية
+            لتحصل على عناوين وظيفية مقترحة وروابط البحث المقابلة.
+          </p>
+
+          <div
+            class="mt-6 max-w-xl border-y border-[#c9d5ce] bg-white/40 px-4 py-3 flex items-center gap-2 path-dots"
+          >
+            <div class="text-center text-[10px] font-bold text-[#176b64]">
+              <span class="status-dot done mx-auto mb-1 block"></span>وجّه البحث
+            </div>
+            <div class="route-line"></div>
+            <div class="text-center text-[10px] font-bold text-slate-400">
+              <span class="status-dot mx-auto mb-1 block"></span>راجع LinkedIn
+            </div>
+            <div class="route-line"></div>
+            <div class="text-center text-[10px] font-bold text-slate-400">
+              <span class="status-dot mx-auto mb-1 block"></span>ثبّت الطلب
+            </div>
+          </div>
+
+          <form
+            id="searchForm"
+            class="mt-6 bg-[#fffdf8] border border-[#d8ddd7] shadow-xl shadow-[#18333a]/5 rounded-[3px_20px_3px_20px] p-5 sm:p-7"
+            onsubmit="searchJobs(event)"
+          >
+            <div class="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <p class="text-[10px] font-bold text-[#59726b] m-0">
+                  بحث موجّه
+                </p>
+                <h2 class="m-0 mt-1 font-bold text-xl">حدد وجهتك المهنية</h2>
+              </div>
+              <span
+                class="text-[10px] border border-[#cfe0da] bg-[#f2f7f5] text-[#176b64] rounded-lg px-2 py-1 font-bold"
+                >يفتح LinkedIn</span
+              >
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <label class="sm:col-span-2 text-xs font-bold text-slate-600"
+                >المسمى أو الكلمات المفتاحية<input
+                  id="jobTitle"
+                  required
+                  type="text"
+                  class="mt-2 block w-full rounded-xl border border-[#d8ddd7] bg-[#fcfbf7] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#176b64]/20 focus:border-[#176b64]"
+                  placeholder="مثال: Financial Manager, UX Designer"
+              /></label>
+              <label class="text-xs font-bold text-slate-600"
+                >الموقع<input
+                  id="location"
+                  type="text"
+                  class="mt-2 block w-full rounded-xl border border-[#d8ddd7] bg-[#fcfbf7] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#176b64]/20 focus:border-[#176b64]"
+                  value="القاهرة، مصر"
+                  placeholder="المدينة أو الدولة"
+              /></label>
+              <label class="text-xs font-bold text-slate-600"
+                >السيرة الذاتية PDF
+                <span class="text-slate-400 font-normal"
+                  >اختياري للاقتراحات</span
+                ><input
+                  id="pdfFile"
+                  accept="application/pdf,.pdf"
+                  type="file"
+                  class="mt-2 block w-full text-xs text-slate-500 file:ml-3 file:border-0 file:rounded-lg file:bg-[#e4eee8] file:text-[#176b64] file:px-3 file:py-2 file:font-bold"
+              /></label>
+            </div>
+            <div
+              class="mt-5 pt-4 border-t border-[#ebe8df] flex flex-wrap items-center gap-x-5 gap-y-3"
+            >
+              <label
+                class="flex items-center gap-2 text-xs font-bold text-slate-600"
+                ><input
+                  id="remote"
+                  type="checkbox"
+                  class="accent-[#176b64] w-4 h-4"
+                />
+                عمل عن بُعد</label
+              >
+              <label
+                class="flex items-center gap-2 text-xs font-bold text-slate-600"
+                ><input
+                  id="easyApply"
+                  type="checkbox"
+                  class="accent-[#176b64] w-4 h-4"
+                />
+                Easy Apply</label
+              >
+              <select
+                id="dateRange"
+                class="text-xs font-bold text-[#176b64] bg-transparent outline-none"
+              >
+                <option value="week">الأسبوع الأخير</option>
+                <option value="day">آخر 24 ساعة</option>
+                <option value="month">آخر شهر</option>
+                <option value="all">أي وقت</option>
+              </select>
+              <button
+                id="searchBtn"
+                type="submit"
+                class="mr-auto w-full sm:w-auto bg-[#18333a] hover:bg-[#176b64] text-white font-bold text-sm rounded-xl px-5 py-3 flex justify-center items-center gap-2"
+              >
+                بحث في LinkedIn <span>↗</span>
+              </button>
+            </div>
+          </form>
+
+          <div id="loading" class="hidden py-10 text-center">
+            <div
+              class="w-8 h-8 border-4 border-[#176b64] border-t-transparent rounded-full animate-spin mx-auto"
+            ></div>
+            <p id="loadingText" class="mt-4 text-sm text-slate-500">
+              جاري تحليل السيرة الذاتية واقتراح عناوين البحث...
+            </p>
+          </div>
+          <section id="suggestionsSection" class="hidden mt-8">
+            <div class="flex justify-between items-end">
+              <div>
+                <p class="text-[10px] font-bold text-[#59726b] m-0">
+                  اقتراحات للبحث
+                </p>
+                <h2 class="m-0 mt-1 text-xl font-bold">ابدأ من هذه المسارات</h2>
+              </div>
+              <button
+                type="button"
+                onclick="openLinkedInSearch()"
+                class="text-xs text-[#176b64] font-bold underline underline-offset-4"
+              >
+                فتح بحثك الأصلي
+              </button>
+            </div>
+            <div id="suggestions" class="grid gap-3 mt-4"></div>
+          </section>
+        </section>
+
+        <section id="applicationsView" class="hidden">
+          <div class="flex flex-wrap gap-4 justify-between items-end">
+            <div>
+              <p
+                class="text-[11px] text-[#176b64] font-bold tracking-wide mb-3"
+              >
+                <span
+                  class="inline-block h-px w-6 bg-[#d95d39] align-middle ml-2"
+                ></span>
+                متابعة يدوية
+              </p>
+              <h1 class="text-4xl font-extrabold leading-[1.35] m-0">
+                طلباتك،<br /><span class="text-[#176b64]">في مسار واحد.</span>
+              </h1>
+              <p class="mt-3 text-sm leading-7 text-slate-500">
+                أضف رابط إعلان LinkedIn الذي راجعته، ثم حدّث المرحلة التي وصلت
+                إليها.
+              </p>
+            </div>
+            <button
+              type="button"
+              onclick="openApplicationModal()"
+              class="bg-[#18333a] hover:bg-[#176b64] text-white rounded-xl px-4 py-3 text-sm font-bold"
+            >
+              + أضف فرصة
+            </button>
+          </div>
+          <div id="applicationsList" class="mt-7 space-y-3"></div>
+          <div
+            id="applicationsEmpty"
+            class="mt-7 max-w-xl text-center border border-dashed border-[#cbd1c8] bg-white/50 p-10"
+          >
+            <p class="text-[#176b64] font-bold text-xs">لوحة نظيفة</p>
+            <h2 class="text-xl font-bold mt-2">لا توجد فرص في مسارك بعد</h2>
+            <p class="text-sm leading-7 text-slate-500">
+              بعد مراجعة إعلان في LinkedIn، أضف رابطه هنا لتتابع التقديم
+              والمقابلات.
+            </p>
+            <button
+              type="button"
+              onclick="openApplicationModal()"
+              class="mt-3 text-sm font-bold text-[#176b64] underline underline-offset-4"
+            >
+              أضف أول فرصة
+            </button>
+          </div>
+        </section>
+
+        <aside class="hidden lg:grid content-start gap-4 pt-12">
+          <article class="border border-[#d8ddd7] bg-white/60 p-5">
+            <p class="text-[10px] font-bold text-[#59726b]">قاعدة المسار</p>
+            <blockquote
+              class="m-0 mt-3 text-sm leading-8 font-bold text-[#2b5550]"
+            >
+              «الفرصة الجيدة ليست التي تراها أولاً، بل التي تعرف لماذا تناسبك.»
+            </blockquote>
+            <div class="mt-4 w-9 h-0.5 bg-[#d95d39]"></div>
+            <p class="mt-4 m-0 text-[11px] leading-6 text-slate-400">
+              دوّن سبب ملاءمة كل إعلان قبل بدء التقديم.
+            </p>
+          </article>
+          <article
+            class="border border-[#d8ddd7] bg-[#e6eee8]/50 p-4 text-[11px] leading-6 text-slate-500"
+          >
+            يتم تخزين فرص التقديم وحالاتها في متصفحك فقط. لا تُرفع السيرة
+            الذاتية إلا عند طلب الاقتراحات.
+          </article>
+        </aside>
+      </main>
+    </div>
+
+    <div
+      id="applicationModal"
+      class="hidden fixed inset-0 z-50 p-4 modal-backdrop items-center justify-center"
+    >
+      <div
+        class="w-full max-w-lg bg-[#fffdf8] rounded-[4px_22px_4px_22px] shadow-2xl p-6 relative"
+      >
+        <button
+          type="button"
+          onclick="closeApplicationModal()"
+          class="absolute left-4 top-4 text-slate-500 text-lg"
+        >
+          ×
+        </button>
+        <p class="text-[10px] font-bold text-[#59726b]">فرصة جديدة</p>
+        <h2 class="text-xl font-bold mt-1">ضع الإعلان على الخريطة</h2>
+        <p class="text-xs leading-6 text-slate-500">
+          انسخ رابط إعلان LinkedIn بعد مراجعته؛ سيكون التقديم بيدك داخل المنصة.
+        </p>
+        <form class="mt-5 space-y-3" onsubmit="saveApplication(event)">
+          <label class="block text-xs font-bold"
+            >المسمى الوظيفي<input
+              id="applicationTitle"
+              required
+              class="mt-1 w-full border border-[#d8ddd7] rounded-lg px-3 py-2.5 text-sm"
+              placeholder="مثال: Product Designer" /></label
+          ><label class="block text-xs font-bold"
+            >الشركة<input
+              id="applicationCompany"
+              required
+              class="mt-1 w-full border border-[#d8ddd7] rounded-lg px-3 py-2.5 text-sm"
+              placeholder="اسم الشركة" /></label
+          ><label class="block text-xs font-bold"
+            >رابط إعلان LinkedIn<input
+              id="applicationUrl"
+              dir="ltr"
+              required
+              type="url"
+              class="mt-1 w-full border border-[#d8ddd7] rounded-lg px-3 py-2.5 text-sm text-left"
+              placeholder="https://www.linkedin.com/jobs/view/..." /></label
+          ><label class="block text-xs font-bold"
+            >ملاحظة لنفسك <span class="text-slate-400 font-normal">اختياري</span
+            ><textarea
+              id="applicationNotes"
+              class="mt-1 w-full border border-[#d8ddd7] rounded-lg px-3 py-2.5 text-sm"
+              rows="3"
+              placeholder="لماذا تناسبك؟ وما الذي ستعدله قبل التقديم؟"
+            ></textarea>
+          </label>
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onclick="closeApplicationModal()"
+              class="text-sm text-slate-500"
+            >
+              إلغاء</button
+            ><button
+              type="submit"
+              class="bg-[#18333a] text-white rounded-lg px-4 py-2 text-sm font-bold"
+            >
+              حفظ الفرصة
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCnsQtY9PdymuKG5suBX1psYgdkCHFFYKs",
+        authDomain: "jobsautosearch.firebaseapp.com",
+        projectId: "jobsautosearch",
+        storageBucket: "jobsautosearch.firebasestorage.app",
+        messagingSenderId: "810040080530",
+        appId: "1:810040080530:web:468f87f88571a510980e4b",
+      };
+      const STATUS = ["محفوظة", "قيد التحضير", "تم التقديم", "مقابلة", "مغلقة"];
+      let currentUser = null;
+      let auth = null;
+
+      function storageKey(name) {
+        return `masar_${currentUser?.uid || "local"}_${name}`;
+      }
+      function readStorage(name, fallback) {
+        try {
+          return JSON.parse(localStorage.getItem(storageKey(name))) ?? fallback;
+        } catch {
+          return fallback;
+        }
+      }
+      function writeStorage(name, value) {
+        localStorage.setItem(storageKey(name), JSON.stringify(value));
+      }
+      function showMessage(message, type = "info") {
+        const node = document.createElement("div");
+        node.textContent = message;
+        node.className = `fixed z-[60] top-5 left-1/2 -translate-x-1/2 px-4 py-3 rounded-xl shadow-xl text-sm font-bold ${type === "error" ? "bg-red-600 text-white" : "bg-[#18333a] text-white"}`;
+        document.body.append(node);
+        setTimeout(() => node.remove(), 4200);
+      }
+      function setScreen(loggedIn) {
+        document
+          .getElementById("loginScreen")
+          .classList.toggle("hidden", loggedIn);
+        document
+          .getElementById("appScreen")
+          .classList.toggle("hidden", !loggedIn);
+      }
+      function updateUserUI() {
+        document.getElementById("userName").textContent =
+          currentUser?.displayName || currentUser?.email || "مستخدم محلي";
+        document
+          .getElementById("logoutBtn")
+          .classList.toggle("hidden", !auth || !currentUser?.uid);
+        renderApplications();
+      }
+
+      function initializeAuth() {
+        try {
+          firebase.initializeApp(firebaseConfig);
+          auth = firebase.auth();
+          auth.onAuthStateChanged((user) => {
+            currentUser = user;
+            setScreen(Boolean(user));
+            if (user) updateUserUI();
+          });
+        } catch (error) {
+          console.warn("Firebase unavailable", error);
+        }
+      }
+      function loginWithGoogle() {
+        if (!auth) {
+          document.getElementById("loginError").textContent =
+            "تعذر الاتصال بخدمة تسجيل الدخول. يمكنك الاستمرار بدون حساب.";
+          document.getElementById("loginError").classList.remove("hidden");
+          return;
+        }
+        auth
+          .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+          .catch((error) => {
+            document.getElementById("loginError").textContent =
+              error.message || "تعذر تسجيل الدخول.";
+            document.getElementById("loginError").classList.remove("hidden");
+          });
+      }
+      function continueWithoutAccount() {
+        currentUser = { uid: "local", displayName: "مستخدم محلي" };
+        setScreen(true);
+        updateUserUI();
+      }
+      function logout() {
+        if (auth && currentUser?.uid !== "local") auth.signOut();
+        else {
+          currentUser = null;
+          setScreen(false);
+        }
+      }
+
+      function setView(view) {
+        document
+          .getElementById("searchView")
+          .classList.toggle("hidden", view !== "search");
+        document
+          .getElementById("applicationsView")
+          .classList.toggle("hidden", view !== "applications");
+        document.querySelectorAll(".view-btn").forEach((button) => {
+          const active = button.dataset.view === view;
+          button.classList.toggle("bg-[#e4eee8]", active);
+          button.classList.toggle("text-[#176b64]", active);
+          button.classList.toggle("text-slate-500", !active);
+        });
+        if (view === "applications") renderApplications();
+      }
+      function getSearchParams(
+        title = document.getElementById("jobTitle").value.trim(),
+      ) {
+        const location = document.getElementById("location").value.trim();
+        const params = new URLSearchParams({ keywords: title, location });
+        if (document.getElementById("remote").checked) params.set("f_WT", "2");
+        if (document.getElementById("easyApply").checked)
+          params.set("f_AL", "true");
+        const range = document.getElementById("dateRange").value;
+        if (range === "day") params.set("f_TPR", "r86400");
+        if (range === "week") params.set("f_TPR", "r604800");
+        if (range === "month") params.set("f_TPR", "r2592000");
+        return params;
+      }
+      function openLinkedInSearch(title) {
+        const term = title || document.getElementById("jobTitle").value.trim();
+        if (!term) return showMessage("اكتب المسمى الوظيفي أولاً.", "error");
+        window.open(
+          `https://www.linkedin.com/jobs/search/?${getSearchParams(term).toString()}`,
+          "_blank",
+          "noopener,noreferrer",
+        );
+        showMessage(
+          "فُتحت نتائج LinkedIn في تبويب جديد. راجع الإعلان ثم ثبّت الفرصة هنا.",
+        );
+      }
+      async function extractTextFromPDF(file) {
+        const buffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+        let text = "";
+        for (let page = 1; page <= pdf.numPages; page++) {
+          const content = await pdf
+            .getPage(page)
+            .then((p) => p.getTextContent());
+          text += content.items.map((item) => item.str).join(" ") + "\n";
+        }
+        return text.trim();
+      }
+      async function searchJobs(event) {
+        event.preventDefault();
+        const title = document.getElementById("jobTitle").value.trim();
+        const file = document.getElementById("pdfFile").files[0];
+        if (!file) {
+          openLinkedInSearch(title);
+          return;
+        }
+        if (file.type !== "application/pdf")
+          return showMessage(
+            "ارفع ملف PDF فقط أو ابحث مباشرةً بدون ملف.",
+            "error",
+          );
+        const loading = document.getElementById("loading");
+        const button = document.getElementById("searchBtn");
+        loading.classList.remove("hidden");
+        button.disabled = true;
+        try {
+          document.getElementById("loadingText").textContent =
+            "جاري استخراج النص من السيرة الذاتية...";
+          const profileText = await extractTextFromPDF(file);
+          if (profileText.length < 40)
+            throw new Error("لم يتمكن المتصفح من قراءة نص كافٍ من الملف.");
+          document.getElementById("loadingText").textContent =
+            "جاري إنشاء اقتراحات بحث منظمة...";
+          const response = await fetch("/api/search", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jobTitle: title,
+              location: document.getElementById("location").value.trim(),
+              profileText,
+            }),
+          });
+          const data = await response.json();
+          if (!response.ok)
+            throw new Error(data.error || "تعذر إنشاء الاقتراحات.");
+          renderSuggestions(data.suggestions || []);
+        } catch (error) {
+          showMessage(
+            error.message || "حدث خطأ أثناء إنشاء الاقتراحات.",
+            "error",
+          );
+        } finally {
+          loading.classList.add("hidden");
+          button.disabled = false;
+        }
+      }
+      function renderSuggestions(suggestions) {
+        const container = document.getElementById("suggestions");
+        container.replaceChildren();
+        const section = document.getElementById("suggestionsSection");
+        if (!suggestions.length) {
+          section.classList.add("hidden");
+          return showMessage(
+            "لم تصل اقتراحات كافية. يمكنك فتح بحثك الأصلي مباشرةً.",
+          );
+        }
+        suggestions.forEach((item) => {
+          const card = document.createElement("article");
+          card.className =
+            "bg-[#fffdf8] border border-[#d8ddd7] rounded-[3px_14px_3px_14px] p-4 flex flex-col sm:flex-row gap-4 justify-between";
+          const text = document.createElement("div");
+          const heading = document.createElement("div");
+          heading.className = "flex gap-2 items-center flex-wrap";
+          const title = document.createElement("h3");
+          title.className = "m-0 text-base font-bold";
+          title.textContent = item.title;
+          const score = document.createElement("span");
+          score.className =
+            "bg-[#e4eee8] text-[#176b64] text-[10px] font-bold rounded-full px-2 py-1";
+          score.textContent = `${item.match_score || 0}% توافق`;
+          heading.append(title, score);
+          const reason = document.createElement("p");
+          reason.className = "my-2 text-xs leading-6 text-slate-500";
+          reason.textContent = item.reason || "";
+          const skills = document.createElement("div");
+          skills.className = "flex flex-wrap gap-1";
+          (item.skills || []).slice(0, 5).forEach((skill) => {
+            const tag = document.createElement("span");
+            tag.className =
+              "text-[10px] bg-[#f2f4ef] text-[#59726b] px-2 py-1 rounded-md";
+            tag.textContent = skill;
+            skills.append(tag);
+          });
+          text.append(heading, reason, skills);
+          const actions = document.createElement("div");
+          actions.className =
+            "flex sm:flex-col items-center sm:items-end gap-2 shrink-0";
+          const open = document.createElement("a");
+          open.href =
+            item.search_url ||
+            `https://www.linkedin.com/jobs/search/?${getSearchParams(item.title)}`;
+          open.target = "_blank";
+          open.rel = "noreferrer";
+          open.className =
+            "text-xs text-[#176b64] font-bold underline underline-offset-4";
+          open.textContent = "بحث في LinkedIn ↗";
+          const save = document.createElement("button");
+          save.type = "button";
+          save.className =
+            "text-xs bg-[#18333a] text-white rounded-lg px-3 py-2 font-bold";
+          save.textContent = "ثبّت فرصة";
+          save.onclick = () => {
+            document.getElementById("applicationTitle").value = item.title;
+            openApplicationModal();
+          };
+          actions.append(open, save);
+          card.append(text, actions);
+          container.append(card);
+        });
+        section.classList.remove("hidden");
+      }
+
+      function openApplicationModal() {
+        document
+          .getElementById("applicationModal")
+          .classList.replace("hidden", "flex");
+      }
+      function closeApplicationModal() {
+        document
+          .getElementById("applicationModal")
+          .classList.replace("flex", "hidden");
+      }
+      function saveApplication(event) {
+        event.preventDefault();
+        const title = document.getElementById("applicationTitle").value.trim();
+        const company = document
+          .getElementById("applicationCompany")
+          .value.trim();
+        const url = document.getElementById("applicationUrl").value.trim();
+        const notes = document.getElementById("applicationNotes").value.trim();
+        try {
+          const parsed = new URL(url);
+          if (!parsed.hostname.includes("linkedin.com"))
+            throw new Error("رابط الإعلان يجب أن يكون من LinkedIn.");
+        } catch (error) {
+          return showMessage(error.message || "أدخل رابط إعلان صحيح.", "error");
+        }
+        const applications = readStorage("applications", []);
+        applications.unshift({
+          id: crypto.randomUUID(),
+          title,
+          company,
+          url,
+          notes,
+          status: "محفوظة",
+          createdAt: new Date().toISOString(),
+        });
+        writeStorage("applications", applications);
+        event.target.reset();
+        closeApplicationModal();
+        renderApplications();
+        showMessage("أُضيفت الفرصة إلى مسارك.");
+      }
+      function renderApplications() {
+        const items = readStorage("applications", []);
+        const list = document.getElementById("applicationsList");
+        const empty = document.getElementById("applicationsEmpty");
+        const count = document.getElementById("navCount");
+        list.replaceChildren();
+        count.textContent = items.length;
+        count.classList.toggle("hidden", !items.length);
+        empty.classList.toggle("hidden", Boolean(items.length));
+        items.forEach((item) => {
+          const card = document.createElement("article");
+          card.className =
+            "relative overflow-hidden border border-[#d8ddd7] bg-[#fffdf8] rounded-[3px_14px_3px_14px] p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between";
+          const accent = document.createElement("span");
+          accent.className =
+            "absolute right-0 top-4 h-8 border-r-[3px] border-[#d95d39]";
+          const main = document.createElement("div");
+          const head = document.createElement("div");
+          head.className = "flex gap-2 items-center flex-wrap";
+          const title = document.createElement("h2");
+          title.className = "m-0 text-base font-bold";
+          title.textContent = item.title;
+          const badge = document.createElement("span");
+          badge.className =
+            "text-[10px] bg-[#e4eee8] text-[#176b64] px-2 py-1 rounded-full font-bold";
+          badge.textContent = item.status;
+          head.append(title, badge);
+          const meta = document.createElement("p");
+          meta.className = "mt-1 mb-0 text-xs text-slate-500";
+          meta.textContent = `${item.company} · أضيفت ${new Intl.DateTimeFormat("ar-EG", { month: "short", day: "numeric" }).format(new Date(item.createdAt))}`;
+          const trail = document.createElement("div");
+          trail.className = "flex items-center gap-0 mt-3";
+          STATUS.slice(0, 4).forEach((status, index) => {
+            const mark = document.createElement("span");
+            mark.className = "flex items-center";
+            const dot = document.createElement("i");
+            dot.className = `status-dot ${index <= STATUS.indexOf(item.status) ? "done" : ""}`;
+            const line = document.createElement("b");
+            line.className = "w-7 border-t border-dashed border-[#9eb2a8]";
+            mark.append(dot);
+            if (index < 3) mark.append(line);
+            trail.append(mark);
+          });
+          main.append(head, meta, trail);
+          if (item.notes) {
+            const note = document.createElement("p");
+            note.className = "mt-2 mb-0 text-[11px] text-slate-500";
+            note.textContent = `ملاحظتك: ${item.notes}`;
+            main.append(note);
+          }
+          const actions = document.createElement("div");
+          actions.className = "flex flex-wrap items-center gap-2";
+          const link = document.createElement("a");
+          link.href = item.url;
+          link.target = "_blank";
+          link.rel = "noreferrer";
+          link.className =
+            "text-xs text-[#176b64] font-bold underline underline-offset-4";
+          link.textContent = "فتح الإعلان ↗";
+          const select = document.createElement("select");
+          select.className =
+            "border border-[#d8ddd7] rounded-lg px-2 py-1.5 text-xs bg-white";
+          STATUS.forEach((status) => {
+            const option = document.createElement("option");
+            option.value = status;
+            option.textContent = status;
+            option.selected = status === item.status;
+            select.append(option);
+          });
+          select.onchange = () =>
+            updateApplicationStatus(item.id, select.value);
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "text-xs text-[#b05b46]";
+          remove.textContent = "إزالة";
+          remove.onclick = () => removeApplication(item.id);
+          actions.append(link, select, remove);
+          card.append(accent, main, actions);
+          list.append(card);
+        });
+      }
+      function updateApplicationStatus(id, status) {
+        const items = readStorage("applications", []).map((item) =>
+          item.id === id ? { ...item, status } : item,
+        );
+        writeStorage("applications", items);
+        renderApplications();
+      }
+      function removeApplication(id) {
+        const items = readStorage("applications", []).filter(
+          (item) => item.id !== id,
+        );
+        writeStorage("applications", items);
+        renderApplications();
+      }
+      window.addEventListener("DOMContentLoaded", () => {
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        initializeAuth();
+      });
+    </script>
+  </body>
+</html>
