@@ -1,9 +1,0 @@
-{
-  "name": "masar",
-  "version": "2.0.0",
-  "private": true,
-  "description": "مسار — منظّم البحث والتقديم اليدوي في LinkedIn (RTL Arabic UI + local Python assistant)",
-  "scripts": {
-    "assistant": "python3 masar_application_assistant.py"
-  }
-}
