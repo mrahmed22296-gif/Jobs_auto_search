@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0f4f4a" />
-    <title>مسار | بحث وظائف LinkedIn</title>
+    <title>مسار | وظائف الكويت والخليج</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700&display=swap"
@@ -72,6 +72,61 @@
         background: rgba(17, 40, 44, 0.48);
         backdrop-filter: blur(5px);
       }
+
+      :focus-visible { outline: 3px solid #d95d39; outline-offset: 3px; }
+      .mobile-nav { position:sticky; top:72px; z-index:25; display:flex; padding:10px 20px; gap:6px; border-bottom:1px solid var(--line); background:var(--paper); }
+      .mobile-nav button { flex:1; padding:11px 5px; border:0; border-radius:10px; font-size:11px; font-weight:700; color:#647875; }
+      .mobile-nav button.active { background:#e4eee8; color:var(--teal); }
+      .section-eyebrow { display:flex; align-items:center; gap:10px; font-size:11px; color:var(--teal); font-weight:700; margin:0 0 15px; }
+      .section-eyebrow>span { width:25px; height:1px; background:var(--orange); }
+      .section-eyebrow.small { font-size:10px; margin:0 0 5px; color:#59726b; }
+      .jobs-heading-row { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+      .jobs-heading { font-size:clamp(31px,3.6vw,48px); line-height:1.45; margin:0; font-weight:800; letter-spacing:-1.2px; }
+      .jobs-heading span { color:var(--teal); }
+      .source-status { white-space:nowrap; display:inline-flex; align-items:center; gap:6px; border:1px solid #e3c9b1; color:#946039; background:#fff8eb; padding:7px 9px; border-radius:30px; font-size:10px; font-weight:700; margin-top:8px; }
+      .source-status i { width:5px; height:5px; border-radius:50%; background:#b97a43; }
+      .section-intro { color:#718096; font-size:13px; line-height:2.1; margin:16px 0 24px; max-width:620px; }
+      .jobs-panel { background:#fffdf8; padding:25px; border:1px solid var(--line); border-radius:3px 20px 3px 20px; box-shadow:0 10px 24px #18333a05; }
+      .panel-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:22px; }
+      .panel-heading h2 { font-size:18px; font-weight:700; margin:0; }
+      .quiet-badge { display:inline-block; font-size:10px; font-weight:700; color:#59726b; background:#eef3ed; padding:5px 8px; border-radius:6px; white-space:nowrap; }
+      .field-label { display:block; font-size:11px; font-weight:700; color:#53666b; margin-bottom:8px; }
+      .field-input { width:100%; min-width:0; border:1px solid var(--line); background:#fcfbf7; color:var(--ink); border-radius:10px; padding:11px 12px; font-family:inherit; font-size:12px; min-height:45px; }
+      .filter-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:18px; }
+      .filter-actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:22px; padding-top:18px; border-top:1px solid #ebe8df; }
+      .primary-action,.secondary-action { border-radius:10px; padding:11px 15px; min-height:44px; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; }
+      .primary-action { color:white; background:var(--ink); border:1px solid var(--ink); display:flex; align-items:center; justify-content:center; gap:20px; }
+      .primary-action:hover { background:var(--teal); }
+      .secondary-action { color:var(--teal); border:1px solid #aac4b8; background:#fffdf8; }
+      .secondary-action:hover { background:#eef4ef; }
+      .text-action { background:transparent; border:0; color:#6b7b81; font-size:11px; padding:8px; cursor:pointer; font-family:inherit; }
+      .helper-copy { margin:13px 0 0; color:#7c8c97; font-size:10px; line-height:1.9; }
+      .saved-searches-section { margin-top:25px; }
+      .section-heading-line,.results-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+      .section-heading-line h2,.results-toolbar h2 { font-size:14px; font-weight:700; margin:0; }
+      .local-badge { color:#83938d; font-size:9px; }
+      .saved-searches-list { display:grid; gap:8px; margin-top:12px; }
+      .saved-search-card { display:flex; align-items:center; gap:10px; border:1px solid var(--line); background:#fffdf8; border-radius:10px; padding:11px 12px; }
+      .saved-search-load { flex:1; min-width:0; text-align:right; border:0; background:none; font-family:inherit; cursor:pointer; }
+      .saved-search-load strong,.saved-search-load span { display:block; overflow-wrap:anywhere; }
+      .saved-search-load strong { color:var(--ink); font-size:12px; }.saved-search-load span { color:#81908d; font-size:10px; margin-top:4px; }
+      .results-toolbar { margin:30px 0 13px; flex-wrap:wrap; }
+      .filter-summary { color:#7c8c97; font-size:10px; overflow-wrap:anywhere; }
+      .source-empty { border:1px dashed #bdcfc4; border-radius:14px; background:#f0f4ee8c; padding:32px 24px; text-align:center; }
+      .empty-symbol { width:44px; height:44px; border:1px solid #cbd9d0; background:#fafbf7; border-radius:12px; margin:0 auto 15px; display:grid; place-items:center; color:var(--teal); font-size:21px; }
+      .source-empty h2 { font-size:19px; font-weight:700; margin:16px 0 10px; }
+      .source-empty p { max-width:510px; margin:0 auto 14px; font-size:12px; line-height:2; color:#7a898d; }
+      .source-empty p.selection-note { font-size:10px; color:#607c74; }
+      .source-empty button { margin-top:5px; }
+      .coverage-details { margin-top:20px; border-bottom:1px solid var(--line); padding:0 0 15px; color:#728981; font-size:11px; line-height:2; }
+      .coverage-details summary { font-weight:700; cursor:pointer; color:#4b6960; }
+      .country-chips { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }.country-chips span { background:#e6eee8; border-radius:5px; padding:3px 8px; }
+      .tracker-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border:1px solid var(--line); border-radius:12px; margin:24px 0 20px; background:#fffdf8; padding:18px 0; }
+      .tracker-stats>div { text-align:center; border-left:1px solid #e7e9df; }.tracker-stats>div:last-child { border:0; }.tracker-stats span { font:700 25px Alexandria,sans-serif; color:var(--teal); }.tracker-stats p { font-size:10px; color:#87958e; margin:7px 0 0; }
+      .tracker-filters { display:grid; grid-template-columns:2fr 1fr; gap:12px; }
+      @media(min-width:1024px) {.mobile-nav { display:none; }}
+      @media(max-width:639px) {.jobs-heading-row { display:block; }.source-status { margin-top:15px; }.jobs-panel { padding:19px 16px; }.panel-heading { align-items:flex-start; }.panel-heading h2 { font-size:16px; }.filter-grid { grid-template-columns:1fr; gap:15px; }.filter-actions .primary-action { width:100%; }.filter-actions .secondary-action { flex:1; }.source-empty { padding:25px 18px; }.source-empty h2 { font-size:17px; }.section-intro { margin-top:15px; }.tracker-filters { grid-template-columns:1fr; }}
+      @media(prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; transition:none!important; animation:none!important; }}
     </style>
   </head>
   <body>
@@ -92,8 +147,7 @@
         </p>
         <h1 class="text-2xl font-extrabold mt-2 mb-3">مسار وظيفي أوضح</h1>
         <p class="text-sm text-slate-500 leading-7 mb-7">
-          ابحث عن الوظائف في LinkedIn، ثم احتفظ بالفرص وحالات التقديم في مكان
-          واحد.
+          جهّز بحثك عن وظائف الكويت والخليج، ونظّم الفرص التي راجعتها في مكان واحد. المصادر الخارجية لم تُربط بعد.
         </p>
         <button
           id="googleBtn"
@@ -230,6 +284,11 @@
           </div>
         </div>
       </header>
+      <nav class="lg:hidden mobile-nav" aria-label="التنقل في مسار">
+        <button type="button" class="view-btn active" data-view="jobs" onclick="setView('jobs')">فرص الوظائف</button>
+        <button type="button" class="view-btn" data-view="search" onclick="setView('search')">اقتراحات مهنية</button>
+        <button type="button" class="view-btn" data-view="applications" onclick="setView('applications')">طلباتي</button>
+      </nav>
 
       <main
         class="max-w-7xl mx-auto px-5 py-8 grid lg:grid-cols-[185px_minmax(0,1fr)_255px] gap-8"
@@ -239,14 +298,15 @@
           <p class="text-[11px] font-bold text-[#59726b] tracking-wide mb-3">
             مساحة العمل
           </p>
-          <nav class="space-y-1">
+          <nav class="space-y-1" aria-label="مساحة العمل">
+            <button type="button" onclick="setView('jobs')" data-view="jobs" class="view-btn active w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-right bg-[#e4eee8] text-[#176b64]">↗ <span>فرص الوظائف</span></button>
             <button
               type="button"
               onclick="setView('search')"
               data-view="search"
-              class="view-btn w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-right bg-[#e4eee8] text-[#176b64]"
+              class="view-btn w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-right text-slate-500"
             >
-              ⌕ <span>بحث الوظائف</span>
+              ⌕ <span>اقتراحات مهنية</span>
             </button>
             <button
               type="button"
@@ -283,12 +343,49 @@
           </p>
         </aside>
 
-        <section id="searchView">
+        <section id="jobsView" aria-labelledby="jobsHeading">
+          <div class="section-eyebrow"><span></span>الكويت والخليج فقط</div>
+          <div class="jobs-heading-row">
+            <h1 id="jobsHeading" class="jobs-heading">وجهتك القادمة،<br><span>تبدأ من هنا.</span></h1>
+            <span class="source-status"><i></i>المصادر غير متصلة</span>
+          </div>
+          <p class="section-intro">جهّز معاييرك الآن، واحتفظ ببحثك للعودة إليه. ستظهر الإعلانات الحقيقية بروابط مصادرها بعد إتمام الربط.</p>
+          <form id="jobsFilterForm" class="jobs-panel" onsubmit="applyJobFilters(event)">
+            <div class="panel-heading"><div><p class="section-eyebrow small">ابحث في الاتجاه الصحيح</p><h2>ما الفرصة التي تبحث عنها؟</h2></div><span class="quiet-badge">٦ دول خليجية</span></div>
+            <label class="field-label" for="jobsQuery">المسمى أو الكلمات المفتاحية</label>
+            <input id="jobsQuery" type="search" maxlength="120" class="field-input" placeholder="مثال: محاسب، مدير مالي، مهندس" autocomplete="off">
+            <div class="filter-grid">
+              <div><label class="field-label" for="jobsCountry">الدولة</label><select id="jobsCountry" class="field-input">
+                <option value="all">كل دول الخليج</option><option value="KW">الكويت</option><option value="SA">السعودية</option><option value="AE">الإمارات</option><option value="QA">قطر</option><option value="BH">البحرين</option><option value="OM">عُمان</option>
+              </select></div>
+              <div><label class="field-label" for="jobsWorkplace">نظام العمل</label><select id="jobsWorkplace" class="field-input"><option value="all">كل الأنظمة</option><option value="onsite">من مقر العمل</option><option value="hybrid">هجين</option><option value="remote">عن بُعد داخل الدولة</option></select></div>
+              <div><label class="field-label" for="jobsPeriod">تاريخ نشر الإعلان</label><select id="jobsPeriod" class="field-input"><option value="all">أي وقت</option><option value="day">آخر ٢٤ ساعة</option><option value="week">آخر أسبوع</option><option value="month">آخر شهر</option></select></div>
+            </div>
+            <div class="filter-actions"><button type="submit" class="primary-action">تطبيق معايير البحث <span aria-hidden="true">←</span></button><button type="button" class="secondary-action" onclick="saveJobSearch()">حفظ هذا البحث</button><button type="button" class="text-action" onclick="resetJobFilters()">مسح المعايير</button></div>
+            <p class="helper-copy">هذه الأدوات تجهّز بحثك فقط الآن. لا تُرسل سيرتك لأي مصدر، ولا تستهلك محاولة الاقتراحات المجانية.</p>
+          </form>
+          <section class="saved-searches-section" aria-labelledby="savedSearchesHeading">
+            <div class="section-heading-line"><h2 id="savedSearchesHeading">أبحاثك المحفوظة</h2><span class="local-badge">في هذا المتصفح فقط</span></div>
+            <div id="savedJobSearches" class="saved-searches-list"></div>
+            <p id="savedSearchesEmpty" class="helper-copy">لم تحفظ بحثاً بعد. اختر معاييرك واضغط «حفظ هذا البحث».</p>
+          </section>
+          <div class="results-toolbar"><h2>الإعلانات الوظيفية</h2><span id="jobsFilterSummary" class="filter-summary">كل دول الخليج · كل الأنظمة</span></div>
+          <div id="jobsConnectionState" class="source-empty" role="status" aria-live="polite">
+            <div class="empty-symbol" aria-hidden="true">↗</div><span class="quiet-badge">بانتظار ربط المصادر</span>
+            <h2>لا توجد إعلانات متصلة بعد</h2>
+            <p>لم يُربط مسار بأي مصدر وظائف خارجي حتى الآن. هذا ليس تأكيداً بعدم وجود وظائف تطابق بحثك، ولن نعرض إعلانات تجريبية كفرص حقيقية.</p>
+            <p id="jobsSelectionNote" class="selection-note">يمكنك حفظ معاييرك والعودة بعد الربط، أو تنظيم فرص LinkedIn التي راجعتها بنفسك.</p>
+            <button type="button" class="secondary-action" onclick="setView('applications')">افتح لوحة طلباتك</button>
+          </div>
+          <details class="coverage-details"><summary>ما الذي سيكون واضحاً مع كل إعلان؟</summary><p>الشركة، الدولة ومكان العمل، المصدر ورابط الإعلان، والتاريخ أو الراتب عندما يوفرهما المصدر. مكان الوظيفة لا يضمن أهلية الإقامة أو التأشيرة. ربط المصادر والتحقق من التغطية خطوة لاحقة.</p><div class="country-chips"><span>الكويت</span><span>السعودية</span><span>الإمارات</span><span>قطر</span><span>البحرين</span><span>عُمان</span></div><p class="helper-copy">الدول هنا نطاق البحث المطلوب، وليست ادعاءً بأن مصدراً يغطيها جميعاً حالياً.</p></details>
+        </section>
+
+        <section id="searchView" class="hidden" aria-label="اقتراحات مهنية بالذكاء الاصطناعي">
           <p class="text-[11px] text-[#176b64] font-bold tracking-wide mb-3">
             <span
               class="inline-block h-px w-6 bg-[#d95d39] align-middle ml-2"
             ></span>
-            نقطة البداية
+            اقتراحات بالذكاء الاصطناعي، وليست وظائف حية
           </p>
           <h1
             class="text-4xl sm:text-5xl font-extrabold leading-[1.35] tracking-tight m-0"
@@ -343,13 +440,7 @@
                   placeholder="مثال: Financial Manager, UX Designer"
               /></label>
               <label class="text-xs font-bold text-slate-600"
-                >الموقع<input
-                  id="location"
-                  type="text"
-                  class="mt-2 block w-full rounded-xl border border-[#d8ddd7] bg-[#fcfbf7] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#176b64]/20 focus:border-[#176b64]"
-                  value="القاهرة، مصر"
-                  placeholder="المدينة أو الدولة"
-              /></label>
+                >الدولة<select id="location" class="mt-2 block w-full rounded-xl border border-[#d8ddd7] bg-[#fcfbf7] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#176b64]/20 focus:border-[#176b64]"><option value="الكويت">الكويت</option><option value="السعودية">السعودية</option><option value="الإمارات العربية المتحدة">الإمارات</option><option value="قطر">قطر</option><option value="البحرين">البحرين</option><option value="عمان">عُمان</option></select></label>
               <label class="text-xs font-bold text-slate-600"
                 >السيرة الذاتية PDF
                 <span class="text-slate-400 font-normal"
@@ -371,7 +462,7 @@
                   type="checkbox"
                   class="accent-[#176b64] w-4 h-4"
                 />
-                عمل عن بُعد</label
+                عن بُعد داخل الدولة</label
               >
               <label
                 class="flex items-center gap-2 text-xs font-bold text-slate-600"
@@ -396,7 +487,7 @@
                 type="submit"
                 class="mr-auto w-full sm:w-auto bg-[#18333a] hover:bg-[#176b64] text-white font-bold text-sm rounded-xl px-5 py-3 flex justify-center items-center gap-2"
               >
-                عرض النتائج في مسار
+                إنشاء اقتراحات مهنية
               </button>
             </div>
             <p
@@ -419,7 +510,7 @@
             <div class="flex justify-between items-end gap-4">
               <div>
                 <p class="text-[10px] font-bold text-[#59726b] m-0">
-                  نتائج داخل مسار
+                  اقتراحات مهنية فقط
                 </p>
                 <h2 class="m-0 mt-1 text-xl font-bold">مسارات مقترحة لبحثك</h2>
               </div>
@@ -468,6 +559,9 @@
               </button>
             </div>
           </div>
+          <div class="tracker-stats" aria-label="ملخص طلباتك"><div><span id="totalApplications">0</span><p>فرصة محفوظة</p></div><div><span id="submittedApplications">0</span><p>تم التقديم</p></div><div><span id="interviewApplications">0</span><p>مقابلة</p></div></div>
+          <div class="tracker-filters"><div><label class="field-label" for="applicationQuery">ابحث في طلباتك</label><input type="search" id="applicationQuery" maxlength="200" placeholder="المسمى أو الشركة" class="field-input" oninput="renderApplications()"></div><div><label class="field-label" for="applicationStatusFilter">الحالة</label><select id="applicationStatusFilter" class="field-input" onchange="renderApplications()"><option value="all">كل الحالات</option><option>محفوظة</option><option>قيد التحضير</option><option>تم التقديم</option><option>مقابلة</option><option>مغلقة</option></select></div></div>
+          <p id="applicationsNoMatch" class="hidden helper-copy" role="status">لا توجد طلبات تطابق هذه المعايير. غيّر البحث أو الحالة، بياناتك لم تُحذف.</p>
           <div id="applicationsList" class="mt-7 space-y-3"></div>
           <div
             id="applicationsEmpty"
@@ -513,11 +607,11 @@
     </div>
 
     <div
-      id="applicationModal"
+      id="applicationModal" role="dialog" aria-modal="true" aria-labelledby="applicationModalHeading"
       class="hidden fixed inset-0 z-50 p-4 modal-backdrop items-center justify-center"
     >
       <div
-        class="w-full max-w-lg bg-[#fffdf8] rounded-[4px_22px_4px_22px] shadow-2xl p-6 relative"
+        class="w-full max-w-lg bg-[#fffdf8] rounded-[4px_22px_4px_22px] shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto"
       >
         <button
           type="button"
@@ -527,7 +621,7 @@
           ×
         </button>
         <p class="text-[10px] font-bold text-[#59726b]">فرصة جديدة</p>
-        <h2 class="text-xl font-bold mt-1">ضع الإعلان على الخريطة</h2>
+        <h2 id="applicationModalHeading" class="text-xl font-bold mt-1">ضع الإعلان على الخريطة</h2>
         <p class="text-xs leading-6 text-slate-500">
           انسخ رابط إعلان LinkedIn بعد مراجعته؛ سيكون التقديم بيدك داخل المنصة.
         </p>
@@ -609,18 +703,61 @@
       }
       function readStorage(name, fallback) {
         try {
-          return JSON.parse(localStorage.getItem(storageKey(name))) ?? fallback;
+          const value = JSON.parse(localStorage.getItem(storageKey(name)));
+          if (Array.isArray(fallback)) return Array.isArray(value) ? value : fallback;
+          return value ?? fallback;
         } catch {
           return fallback;
         }
       }
       function writeStorage(name, value) {
-        localStorage.setItem(storageKey(name), JSON.stringify(value));
+        try {
+          localStorage.setItem(storageKey(name), JSON.stringify(value));
+          return true;
+        } catch {
+          showMessage("تعذر الحفظ في هذا المتصفح. لم يتم تأكيد التغيير؛ احتفظ بنسخة من البيانات وحاول مجدداً.", "error");
+          return false;
+        }
       }
+      function linkedInJobUrl(value) {
+        try {
+          const parsed = new URL(value);
+          const host = parsed.hostname.toLowerCase();
+          if (parsed.protocol !== "https:" || parsed.username || parsed.password ||
+              (parsed.port && parsed.port !== "443") ||
+              !(host === "linkedin.com" || host.endsWith(".linkedin.com")) ||
+              !/^\/jobs\/view\/[^/]+\/?$/.test(parsed.pathname)) return null;
+          return parsed.href;
+        } catch { return null; }
+      }
+      function applicationsForWrite() {
+        try {
+          const raw = localStorage.getItem(storageKey("applications"));
+          const items = raw === null ? [] : JSON.parse(raw);
+          if (!Array.isArray(items)) throw new Error();
+          return items;
+        } catch {
+          showMessage("تعذر قراءة السجل المحفوظ. لم نكتب فوقه؛ احتفظ بنسخة من بيانات المتصفح قبل الإصلاح.", "error");
+          return null;
+        }
+      }
+      function getApplications() {
+        return readStorage("applications", []).filter(item => item && typeof item === "object" &&
+          typeof item.id === "string" && typeof item.title === "string" && typeof item.company === "string" &&
+          typeof item.url === "string" && linkedInJobUrl(item.url) && STATUS.includes(item.status) &&
+          typeof item.createdAt === "string" && Number.isFinite(Date.parse(item.createdAt)));
+      }
+      function formatStoredDate(value) {
+        const date = new Date(value);
+        return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat("ar-EG", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date) : "";
+      }
+      let searchInFlight = false;
       function showMessage(message, type = "info") {
+        document.querySelectorAll(".masar-message").forEach(node => node.remove());
         const node = document.createElement("div");
+        node.setAttribute("role", type === "error" ? "alert" : "status");
         node.textContent = message;
-        node.className = `fixed z-[60] top-5 left-1/2 -translate-x-1/2 px-4 py-3 rounded-xl shadow-xl text-sm font-bold ${type === "error" ? "bg-red-600 text-white" : "bg-[#18333a] text-white"}`;
+        node.className = `masar-message fixed z-[60] bottom-5 left-1/2 -translate-x-1/2 max-w-[90vw] break-words text-center px-4 py-3 rounded-xl shadow-xl text-sm font-bold ${type === "error" ? "bg-red-600 text-white" : "bg-[#18333a] text-white"}`;
         document.body.append(node);
         setTimeout(() => node.remove(), 4200);
       }
@@ -640,14 +777,18 @@
           .getElementById("logoutBtn")
           .classList.toggle("hidden", !auth || !currentUser?.uid);
         updateSubscriptionUI();
+        document.getElementById("applicationQuery").value = "";
+        document.getElementById("applicationStatusFilter").value = "all";
+        resetJobFilters(false);
+        renderSavedJobSearches();
+        setView('jobs');
         renderApplications();
       }
 
       function getUsedCodes() {
         try {
-          return JSON.parse(
-            localStorage.getItem("masar_used_activation_codes") || "[]",
-          );
+          const used = JSON.parse(localStorage.getItem("masar_used_activation_codes") || "[]");
+          return Array.isArray(used) ? used.filter(code => typeof code === "string") : [];
         } catch {
           return [];
         }
@@ -835,35 +976,125 @@
       }
 
       function setView(view) {
-        document
-          .getElementById("searchView")
-          .classList.toggle("hidden", view !== "search");
-        document
-          .getElementById("applicationsView")
-          .classList.toggle("hidden", view !== "applications");
-        document.querySelectorAll(".view-btn").forEach((button) => {
+        if (!["jobs", "search", "applications"].includes(view)) return;
+        for (const name of ["jobs", "search", "applications"]) {
+          document.getElementById(name + "View").classList.toggle("hidden", name !== view);
+        }
+        document.querySelectorAll(".view-btn").forEach(button => {
           const active = button.dataset.view === view;
+          button.classList.toggle("active", active);
           button.classList.toggle("bg-[#e4eee8]", active);
           button.classList.toggle("text-[#176b64]", active);
           button.classList.toggle("text-slate-500", !active);
+          button.setAttribute("aria-current", active ? "page" : "false");
         });
         if (view === "applications") renderApplications();
+        if (view === "jobs") renderSavedJobSearches();
+        // Wait for the new panel layout, then reset scrolling below the sticky header/nav.
+        // Otherwise browser scroll anchoring can leave the new panel heading hidden.
+        if (window.requestAnimationFrame) window.requestAnimationFrame(() => window.scrollTo({top:0,left:0,behavior:"instant"}));
+      }
+      const GULF_LABELS = Object.freeze({all:"كل دول الخليج",KW:"الكويت",SA:"السعودية",AE:"الإمارات",QA:"قطر",BH:"البحرين",OM:"عُمان"});
+      const WORKPLACE_LABELS = Object.freeze({all:"كل الأنظمة",onsite:"من مقر العمل",hybrid:"هجين",remote:"عن بُعد داخل الدولة"});
+      const PERIOD_LABELS = Object.freeze({all:"أي وقت",day:"آخر ٢٤ ساعة",week:"آخر أسبوع",month:"آخر شهر"});
+      // No provider is connected. Never fill this UI with generated or demo job rows.
+      function readJobFilters() {
+        const country = document.getElementById("jobsCountry").value;
+        const workplace = document.getElementById("jobsWorkplace").value;
+        const period = document.getElementById("jobsPeriod").value;
+        return {query:document.getElementById("jobsQuery").value.trim().slice(0,120),
+          country:Object.hasOwn(GULF_LABELS,country)?country:"all",
+          workplace:Object.hasOwn(WORKPLACE_LABELS,workplace)?workplace:"all",
+          period:Object.hasOwn(PERIOD_LABELS,period)?period:"all"};
+      }
+      function applyJobFilters(event) {
+        event?.preventDefault();
+        const f = readJobFilters();
+        document.getElementById("jobsFilterSummary").textContent = [GULF_LABELS[f.country],WORKPLACE_LABELS[f.workplace],PERIOD_LABELS[f.period]].join(" · ");
+        document.getElementById("jobsSelectionNote").textContent = f.query ? `بحثك: ${f.query}. معاييرك جاهزة، لكن لا يمكن جلب إعلانات قبل ربط مصدر فعلي.` : "معاييرك جاهزة. يمكنك حفظ البحث؛ ربط مصادر الإعلانات لم يكتمل بعد.";
+      }
+      function resetJobFilters(notify = true) {
+        document.getElementById("jobsFilterForm").reset();
+        applyJobFilters();
+        if (notify) showMessage("تمت إعادة معايير البحث. الأبحاث المحفوظة لم تتغير.");
+      }
+      function savedSearchesForWrite() {
+        try {
+          const raw = localStorage.getItem(storageKey("savedJobSearches"));
+          const rows = raw === null ? [] : JSON.parse(raw);
+          if (!Array.isArray(rows)) throw new Error();
+          return rows;
+        } catch {
+          showMessage("تعذر قراءة الأبحاث المحفوظة. لم نكتب فوق بياناتك.","error");
+          return null;
+        }
+      }
+      function getSavedJobSearches() {
+        return readStorage("savedJobSearches",[]).filter(row => row && typeof row === "object" && typeof row.id === "string" && typeof row.query === "string" && row.query.length <=120 && Object.hasOwn(GULF_LABELS,row.country) && Object.hasOwn(WORKPLACE_LABELS,row.workplace) && Object.hasOwn(PERIOD_LABELS,row.period));
+      }
+      function saveJobSearch() {
+        const filters = readJobFilters();
+        if (!filters.query) return showMessage("أدخل المسمى أو الكلمات المفتاحية قبل حفظ البحث.","error");
+        const rows = savedSearchesForWrite();
+        if (!rows) return;
+        if (getSavedJobSearches().some(row => ["query","country","workplace","period"].every(key => row[key]===filters[key]))) return showMessage("هذا البحث محفوظ بالفعل.");
+        if (rows.length >= 8) return showMessage("يمكنك حفظ ٨ أبحاث. احذف بحثاً قديماً لإضافة آخر.","error");
+        if (!writeStorage("savedJobSearches",[{id:crypto.randomUUID(),...filters},...rows])) return;
+        applyJobFilters(); renderSavedJobSearches(); showMessage("حُفظ البحث في هذا المتصفح، وليس تنبيهاً أو اشتراكاً بمصدر وظائف.");
+      }
+      function loadSavedJobSearch(id) {
+        const row = getSavedJobSearches().find(item => item.id === id);
+        if (!row) return;
+        document.getElementById("jobsQuery").value=row.query;
+        document.getElementById("jobsCountry").value=row.country;
+        document.getElementById("jobsWorkplace").value=row.workplace;
+        document.getElementById("jobsPeriod").value=row.period;
+        applyJobFilters();
+      }
+      function removeSavedJobSearch(id) {
+        const rows = savedSearchesForWrite();
+        if (!rows || !writeStorage("savedJobSearches",rows.filter(row => row?.id !== id))) return;
+        renderSavedJobSearches();
+      }
+      function renderSavedJobSearches() {
+        const rows=getSavedJobSearches(), list=document.getElementById("savedJobSearches");
+        list.replaceChildren();
+        document.getElementById("savedSearchesEmpty").classList.toggle("hidden",Boolean(rows.length));
+        rows.forEach(row => {
+          const card=document.createElement("div");card.className="saved-search-card";
+          const load=document.createElement("button");load.type="button";load.className="saved-search-load";
+          const title=document.createElement("strong");title.textContent=row.query;
+          const meta=document.createElement("span");meta.textContent=[GULF_LABELS[row.country],WORKPLACE_LABELS[row.workplace],PERIOD_LABELS[row.period]].join(" · ");
+          load.append(title,meta);load.onclick=()=>loadSavedJobSearch(row.id);
+          const remove=document.createElement("button");remove.type="button";remove.className="text-action";remove.textContent="حذف";remove.setAttribute("aria-label",`حذف البحث ${row.query}`);remove.onclick=()=>removeSavedJobSearch(row.id);
+          card.append(load,remove);list.append(card);
+        });
       }
       async function extractTextFromPDF(file) {
+        if (!window.pdfjsLib) throw new Error("تعذر تحميل قارئ PDF. أعد تحميل الصفحة أو ابحث بدون ملف.");
         const buffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-        let text = "";
-        for (let page = 1; page <= pdf.numPages; page++) {
-          const content = await pdf
-            .getPage(page)
-            .then((p) => p.getTextContent());
-          text += content.items.map((item) => item.str).join(" ") + "\n";
+        const task = pdfjsLib.getDocument({ data: buffer });
+        const deadline = setTimeout(() => task.destroy(), 15000);
+        try {
+          const pdf = await task.promise;
+          if (pdf.numPages > 100) throw new Error("السيرة طويلة جداً. استخدم ملفاً لا يتجاوز 100 صفحة.");
+          let text = "";
+          for (let page = 1; page <= pdf.numPages; page++) {
+            const content = await pdf.getPage(page).then(p => p.getTextContent());
+            text += content.items.map(item => item.str).join(" ") + "\n";
+            if (text.length > 12000) throw new Error("نص السيرة طويل جداً. استخدم نسخة مختصرة حتى 12000 حرف.");
+          }
+          return text.trim();
+        } finally {
+          clearTimeout(deadline);
+          await task.destroy();
         }
-        return text.trim();
       }
       async function searchJobs(event) {
         event.preventDefault();
         const title = document.getElementById("jobTitle").value.trim();
+        if (searchInFlight) return;
+        if (!title || title.length > 200) return showMessage("أدخل مسمى وظيفياً من 1 إلى 200 حرف.", "error");
         const file = document.getElementById("pdfFile").files[0];
         if (!hasFreeSearch()) {
           showSubscribeScreen();
@@ -874,6 +1105,10 @@
             "ارفع ملف PDF فقط أو ابحث مباشرةً بدون ملف.",
             "error",
           );
+        if (file && file.size > 10 * 1024 * 1024) return showMessage("حجم ملف PDF يجب ألا يتجاوز 10 ميجابايت.", "error");
+        searchInFlight = true;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 30000);
         const loading = document.getElementById("loading");
         const button = document.getElementById("searchBtn");
         loading.classList.remove("hidden");
@@ -887,9 +1122,12 @@
             if (profileText.length < 40)
               throw new Error("لم يتمكن المتصفح من قراءة نص كافٍ من الملف.");
           }
+          if (profileText.length > 12000) throw new Error("نص السيرة طويل جداً. استخدم نسخة مختصرة حتى 12000 حرف.");
+          if (controller.signal.aborted) throw new Error("انتهت مهلة قراءة السيرة. حاول بملف أصغر.");
           document.getElementById("loadingText").textContent =
             "جاري إنشاء نتائج اقتراحية داخل مسار...";
           const response = await fetch("/api/search", {
+            signal: controller.signal,
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -904,17 +1142,20 @@
           const data = await response.json();
           if (!response.ok)
             throw new Error(data.error || "تعذر إنشاء الاقتراحات.");
-          renderSuggestions(data.suggestions || []);
+          if (!Array.isArray(data.suggestions) || !data.suggestions.length) throw new Error("لم تصل اقتراحات قابلة للاستخدام. لم تُحسب محاولة بحث.");
+          renderSuggestions(data.suggestions);
           if (!isSubscribed()) {
             incrementSearchCount();
             updateSubscriptionUI();
           }
         } catch (error) {
           showMessage(
-            error.message || "حدث خطأ أثناء إنشاء الاقتراحات.",
+            controller.signal.aborted ? "انتهت مهلة الاقتراحات. حاول لاحقاً؛ بياناتك محفوظة." : error.message || "حدث خطأ أثناء إنشاء الاقتراحات.",
             "error",
           );
         } finally {
+          clearTimeout(timeout);
+          searchInFlight = false;
           loading.classList.add("hidden");
           button.disabled = false;
         }
@@ -999,31 +1240,28 @@
           .value.trim();
         const url = document.getElementById("applicationUrl").value.trim();
         const notes = document.getElementById("applicationNotes").value.trim();
-        try {
-          const parsed = new URL(url);
-          if (!parsed.hostname.includes("linkedin.com"))
-            throw new Error("رابط الإعلان يجب أن يكون من LinkedIn.");
-        } catch (error) {
-          return showMessage(error.message || "أدخل رابط إعلان صحيح.", "error");
-        }
-        const applications = readStorage("applications", []);
+        const safeUrl = linkedInJobUrl(url);
+        if (!safeUrl) return showMessage("أدخل رابط إعلان LinkedIn صحيحاً يبدأ بـ https://www.linkedin.com/jobs/view/", "error");
+        if (!title || !company) return showMessage("أدخل المسمى والشركة أولاً.", "error");
+        const applications = applicationsForWrite();
+        if (!applications) return;
         applications.unshift({
           id: crypto.randomUUID(),
           title,
           company,
-          url,
+          url: safeUrl,
           notes,
           status: "محفوظة",
           createdAt: new Date().toISOString(),
         });
-        writeStorage("applications", applications);
+        if (!writeStorage("applications", applications)) return;
         event.target.reset();
         closeApplicationModal();
         renderApplications();
         showMessage("أُضيفت الفرصة إلى مسارك.");
       }
       function renderApplications() {
-        const items = readStorage("applications", []);
+        const items = getApplications();
         const list = document.getElementById("applicationsList");
         const empty = document.getElementById("applicationsEmpty");
         const count = document.getElementById("navCount");
@@ -1031,7 +1269,14 @@
         count.textContent = items.length;
         count.classList.toggle("hidden", !items.length);
         empty.classList.toggle("hidden", Boolean(items.length));
-        items.forEach((item) => {
+        const query=document.getElementById("applicationQuery").value.trim().toLocaleLowerCase();
+        const status=document.getElementById("applicationStatusFilter").value;
+        const shown=items.filter(item => (status==="all" || item.status===status) && (!query || `${item.title} ${item.company}`.toLocaleLowerCase().includes(query)));
+        document.getElementById("totalApplications").textContent=items.length;
+        document.getElementById("submittedApplications").textContent=items.filter(item=>item.status==="تم التقديم").length;
+        document.getElementById("interviewApplications").textContent=items.filter(item=>item.status==="مقابلة").length;
+        document.getElementById("applicationsNoMatch").classList.toggle("hidden",!items.length || Boolean(shown.length));
+        shown.forEach((item) => {
           const card = document.createElement("article");
           card.className =
             "relative overflow-hidden border border-[#d8ddd7] bg-[#fffdf8] rounded-[3px_14px_3px_14px] p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between";
@@ -1051,7 +1296,7 @@
           head.append(title, badge);
           const meta = document.createElement("p");
           meta.className = "mt-1 mb-0 text-xs text-slate-500";
-          meta.textContent = `${item.company} · أضيفت ${new Intl.DateTimeFormat("ar-EG", { month: "short", day: "numeric" }).format(new Date(item.createdAt))}`;
+          meta.textContent = `${item.company} · أضيفت ${formatStoredDate(item.createdAt)}`;
           const trail = document.createElement("div");
           trail.className = "flex items-center gap-0 mt-3";
           STATUS.slice(0, 4).forEach((status, index) => {
@@ -1082,6 +1327,7 @@
             "text-xs text-[#176b64] font-bold underline underline-offset-4";
           link.textContent = "فتح الإعلان ↗";
           const select = document.createElement("select");
+          select.setAttribute("aria-label",`حالة الطلب ${item.title}`);
           select.className =
             "border border-[#d8ddd7] rounded-lg px-2 py-1.5 text-xs bg-white";
           STATUS.forEach((status) => {
@@ -1104,19 +1350,24 @@
         });
       }
       function updateApplicationStatus(id, status) {
-        const items = readStorage("applications", []).map((item) =>
-          item.id === id
+        if (!STATUS.includes(status)) return;
+        const original = applicationsForWrite();
+        if (!original) return;
+        const items = original.map((item) =>
+          item?.id === id
             ? { ...item, status, statusChangedAt: new Date().toISOString() }
             : item,
         );
-        writeStorage("applications", items);
+        if (!writeStorage("applications", items)) return;
         renderApplications();
       }
       function csvCell(value) {
-        return `"${String(value ?? "").replaceAll('"', '""')}"`;
+        let text = String(value ?? "");
+        if (/^[\s\u0000-\u001f]*[=+@-]/.test(text) || /^[\t\r\n]/.test(text)) text = "'" + text;
+        return `"${text.replaceAll('"', '""')}"`;
       }
       function exportSubmittedApplications() {
-        const submitted = readStorage("applications", []).filter(
+        const submitted = getApplications().filter(
           (item) => item.status === "تم التقديم",
         );
         if (!submitted.length) {
@@ -1146,10 +1397,8 @@
           item.url,
           item.status,
           item.notes,
-          dateFormat.format(new Date(item.createdAt)),
-          item.statusChangedAt
-            ? dateFormat.format(new Date(item.statusChangedAt))
-            : "",
+          formatStoredDate(item.createdAt),
+          item.statusChangedAt ? formatStoredDate(item.statusChangedAt) : "",
         ]);
         const csv =
           "\uFEFF" +
@@ -1170,14 +1419,14 @@
         );
       }
       function removeApplication(id) {
-        const items = readStorage("applications", []).filter(
-          (item) => item.id !== id,
-        );
-        writeStorage("applications", items);
+        const original = applicationsForWrite();
+        if (!original) return;
+        const items = original.filter((item) => item?.id !== id);
+        if (!writeStorage("applications", items)) return;
         renderApplications();
       }
       window.addEventListener("DOMContentLoaded", () => {
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
+        if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc =
           "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
         initializeAuth();
       });

@@ -1,5 +1,11 @@
 {
   "name": "linkedin-job-finder",
   "version": "1.0.0",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "jsdom": "^31.0.1"
+  },
+  "scripts": {
+    "test": "node test-api.mjs && node test-client.cjs && node test-workspace.cjs && node test-jobs.mjs"
+  }
 }
