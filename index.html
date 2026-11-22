@@ -990,6 +990,9 @@
         });
         if (view === "applications") renderApplications();
         if (view === "jobs") renderSavedJobSearches();
+        // Wait for the new panel layout, then reset scrolling below the sticky header/nav.
+        // Otherwise browser scroll anchoring can leave the new panel heading hidden.
+        if (window.requestAnimationFrame) window.requestAnimationFrame(() => window.scrollTo({top:0,left:0,behavior:"instant"}));
       }
       const GULF_LABELS = Object.freeze({all:"كل دول الخليج",KW:"الكويت",SA:"السعودية",AE:"الإمارات",QA:"قطر",BH:"البحرين",OM:"عُمان"});
       const WORKPLACE_LABELS = Object.freeze({all:"كل الأنظمة",onsite:"من مقر العمل",hybrid:"هجين",remote:"عن بُعد داخل الدولة"});
