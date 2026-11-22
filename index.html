@@ -609,18 +609,61 @@
       }
       function readStorage(name, fallback) {
         try {
-          return JSON.parse(localStorage.getItem(storageKey(name))) ?? fallback;
+          const value = JSON.parse(localStorage.getItem(storageKey(name)));
+          if (Array.isArray(fallback)) return Array.isArray(value) ? value : fallback;
+          return value ?? fallback;
         } catch {
           return fallback;
         }
       }
       function writeStorage(name, value) {
-        localStorage.setItem(storageKey(name), JSON.stringify(value));
+        try {
+          localStorage.setItem(storageKey(name), JSON.stringify(value));
+          return true;
+        } catch {
+          showMessage("تعذر الحفظ في هذا المتصفح. لم يتم تأكيد التغيير؛ احتفظ بنسخة من البيانات وحاول مجدداً.", "error");
+          return false;
+        }
       }
+      function linkedInJobUrl(value) {
+        try {
+          const parsed = new URL(value);
+          const host = parsed.hostname.toLowerCase();
+          if (parsed.protocol !== "https:" || parsed.username || parsed.password ||
+              (parsed.port && parsed.port !== "443") ||
+              !(host === "linkedin.com" || host.endsWith(".linkedin.com")) ||
+              !/^\/jobs\/view\/[^/]+\/?$/.test(parsed.pathname)) return null;
+          return parsed.href;
+        } catch { return null; }
+      }
+      function applicationsForWrite() {
+        try {
+          const raw = localStorage.getItem(storageKey("applications"));
+          const items = raw === null ? [] : JSON.parse(raw);
+          if (!Array.isArray(items)) throw new Error();
+          return items;
+        } catch {
+          showMessage("تعذر قراءة السجل المحفوظ. لم نكتب فوقه؛ احتفظ بنسخة من بيانات المتصفح قبل الإصلاح.", "error");
+          return null;
+        }
+      }
+      function getApplications() {
+        return readStorage("applications", []).filter(item => item && typeof item === "object" &&
+          typeof item.id === "string" && typeof item.title === "string" && typeof item.company === "string" &&
+          typeof item.url === "string" && linkedInJobUrl(item.url) && STATUS.includes(item.status) &&
+          typeof item.createdAt === "string" && Number.isFinite(Date.parse(item.createdAt)));
+      }
+      function formatStoredDate(value) {
+        const date = new Date(value);
+        return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat("ar-EG", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date) : "";
+      }
+      let searchInFlight = false;
       function showMessage(message, type = "info") {
+        document.querySelectorAll(".masar-message").forEach(node => node.remove());
         const node = document.createElement("div");
+        node.setAttribute("role", type === "error" ? "alert" : "status");
         node.textContent = message;
-        node.className = `fixed z-[60] top-5 left-1/2 -translate-x-1/2 px-4 py-3 rounded-xl shadow-xl text-sm font-bold ${type === "error" ? "bg-red-600 text-white" : "bg-[#18333a] text-white"}`;
+        node.className = `masar-message fixed z-[60] top-5 left-1/2 -translate-x-1/2 max-w-[90vw] break-words text-center px-4 py-3 rounded-xl shadow-xl text-sm font-bold ${type === "error" ? "bg-red-600 text-white" : "bg-[#18333a] text-white"}`;
         document.body.append(node);
         setTimeout(() => node.remove(), 4200);
       }
@@ -645,9 +688,8 @@
 
       function getUsedCodes() {
         try {
-          return JSON.parse(
-            localStorage.getItem("masar_used_activation_codes") || "[]",
-          );
+          const used = JSON.parse(localStorage.getItem("masar_used_activation_codes") || "[]");
+          return Array.isArray(used) ? used.filter(code => typeof code === "string") : [];
         } catch {
           return [];
         }
@@ -850,20 +892,30 @@
         if (view === "applications") renderApplications();
       }
       async function extractTextFromPDF(file) {
+        if (!window.pdfjsLib) throw new Error("تعذر تحميل قارئ PDF. أعد تحميل الصفحة أو ابحث بدون ملف.");
         const buffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-        let text = "";
-        for (let page = 1; page <= pdf.numPages; page++) {
-          const content = await pdf
-            .getPage(page)
-            .then((p) => p.getTextContent());
-          text += content.items.map((item) => item.str).join(" ") + "\n";
+        const task = pdfjsLib.getDocument({ data: buffer });
+        const deadline = setTimeout(() => task.destroy(), 15000);
+        try {
+          const pdf = await task.promise;
+          if (pdf.numPages > 100) throw new Error("السيرة طويلة جداً. استخدم ملفاً لا يتجاوز 100 صفحة.");
+          let text = "";
+          for (let page = 1; page <= pdf.numPages; page++) {
+            const content = await pdf.getPage(page).then(p => p.getTextContent());
+            text += content.items.map(item => item.str).join(" ") + "\n";
+            if (text.length > 12000) throw new Error("نص السيرة طويل جداً. استخدم نسخة مختصرة حتى 12000 حرف.");
+          }
+          return text.trim();
+        } finally {
+          clearTimeout(deadline);
+          await task.destroy();
         }
-        return text.trim();
       }
       async function searchJobs(event) {
         event.preventDefault();
         const title = document.getElementById("jobTitle").value.trim();
+        if (searchInFlight) return;
+        if (!title || title.length > 200) return showMessage("أدخل مسمى وظيفياً من 1 إلى 200 حرف.", "error");
         const file = document.getElementById("pdfFile").files[0];
         if (!hasFreeSearch()) {
           showSubscribeScreen();
@@ -874,6 +926,10 @@
             "ارفع ملف PDF فقط أو ابحث مباشرةً بدون ملف.",
             "error",
           );
+        if (file && file.size > 10 * 1024 * 1024) return showMessage("حجم ملف PDF يجب ألا يتجاوز 10 ميجابايت.", "error");
+        searchInFlight = true;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 30000);
         const loading = document.getElementById("loading");
         const button = document.getElementById("searchBtn");
         loading.classList.remove("hidden");
@@ -887,9 +943,12 @@
             if (profileText.length < 40)
               throw new Error("لم يتمكن المتصفح من قراءة نص كافٍ من الملف.");
           }
+          if (profileText.length > 12000) throw new Error("نص السيرة طويل جداً. استخدم نسخة مختصرة حتى 12000 حرف.");
+          if (controller.signal.aborted) throw new Error("انتهت مهلة قراءة السيرة. حاول بملف أصغر.");
           document.getElementById("loadingText").textContent =
             "جاري إنشاء نتائج اقتراحية داخل مسار...";
           const response = await fetch("/api/search", {
+            signal: controller.signal,
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -904,17 +963,20 @@
           const data = await response.json();
           if (!response.ok)
             throw new Error(data.error || "تعذر إنشاء الاقتراحات.");
-          renderSuggestions(data.suggestions || []);
+          if (!Array.isArray(data.suggestions) || !data.suggestions.length) throw new Error("لم تصل اقتراحات قابلة للاستخدام. لم تُحسب محاولة بحث.");
+          renderSuggestions(data.suggestions);
           if (!isSubscribed()) {
             incrementSearchCount();
             updateSubscriptionUI();
           }
         } catch (error) {
           showMessage(
-            error.message || "حدث خطأ أثناء إنشاء الاقتراحات.",
+            controller.signal.aborted ? "انتهت مهلة الاقتراحات. حاول لاحقاً؛ بياناتك محفوظة." : error.message || "حدث خطأ أثناء إنشاء الاقتراحات.",
             "error",
           );
         } finally {
+          clearTimeout(timeout);
+          searchInFlight = false;
           loading.classList.add("hidden");
           button.disabled = false;
         }
@@ -999,31 +1061,28 @@
           .value.trim();
         const url = document.getElementById("applicationUrl").value.trim();
         const notes = document.getElementById("applicationNotes").value.trim();
-        try {
-          const parsed = new URL(url);
-          if (!parsed.hostname.includes("linkedin.com"))
-            throw new Error("رابط الإعلان يجب أن يكون من LinkedIn.");
-        } catch (error) {
-          return showMessage(error.message || "أدخل رابط إعلان صحيح.", "error");
-        }
-        const applications = readStorage("applications", []);
+        const safeUrl = linkedInJobUrl(url);
+        if (!safeUrl) return showMessage("أدخل رابط إعلان LinkedIn صحيحاً يبدأ بـ https://www.linkedin.com/jobs/view/", "error");
+        if (!title || !company) return showMessage("أدخل المسمى والشركة أولاً.", "error");
+        const applications = applicationsForWrite();
+        if (!applications) return;
         applications.unshift({
           id: crypto.randomUUID(),
           title,
           company,
-          url,
+          url: safeUrl,
           notes,
           status: "محفوظة",
           createdAt: new Date().toISOString(),
         });
-        writeStorage("applications", applications);
+        if (!writeStorage("applications", applications)) return;
         event.target.reset();
         closeApplicationModal();
         renderApplications();
         showMessage("أُضيفت الفرصة إلى مسارك.");
       }
       function renderApplications() {
-        const items = readStorage("applications", []);
+        const items = getApplications();
         const list = document.getElementById("applicationsList");
         const empty = document.getElementById("applicationsEmpty");
         const count = document.getElementById("navCount");
@@ -1051,7 +1110,7 @@
           head.append(title, badge);
           const meta = document.createElement("p");
           meta.className = "mt-1 mb-0 text-xs text-slate-500";
-          meta.textContent = `${item.company} · أضيفت ${new Intl.DateTimeFormat("ar-EG", { month: "short", day: "numeric" }).format(new Date(item.createdAt))}`;
+          meta.textContent = `${item.company} · أضيفت ${formatStoredDate(item.createdAt)}`;
           const trail = document.createElement("div");
           trail.className = "flex items-center gap-0 mt-3";
           STATUS.slice(0, 4).forEach((status, index) => {
@@ -1104,19 +1163,24 @@
         });
       }
       function updateApplicationStatus(id, status) {
-        const items = readStorage("applications", []).map((item) =>
-          item.id === id
+        if (!STATUS.includes(status)) return;
+        const original = applicationsForWrite();
+        if (!original) return;
+        const items = original.map((item) =>
+          item?.id === id
             ? { ...item, status, statusChangedAt: new Date().toISOString() }
             : item,
         );
-        writeStorage("applications", items);
+        if (!writeStorage("applications", items)) return;
         renderApplications();
       }
       function csvCell(value) {
-        return `"${String(value ?? "").replaceAll('"', '""')}"`;
+        let text = String(value ?? "");
+        if (/^[\s\u0000-\u001f]*[=+@-]/.test(text) || /^[\t\r\n]/.test(text)) text = "'" + text;
+        return `"${text.replaceAll('"', '""')}"`;
       }
       function exportSubmittedApplications() {
-        const submitted = readStorage("applications", []).filter(
+        const submitted = getApplications().filter(
           (item) => item.status === "تم التقديم",
         );
         if (!submitted.length) {
@@ -1146,10 +1210,8 @@
           item.url,
           item.status,
           item.notes,
-          dateFormat.format(new Date(item.createdAt)),
-          item.statusChangedAt
-            ? dateFormat.format(new Date(item.statusChangedAt))
-            : "",
+          formatStoredDate(item.createdAt),
+          item.statusChangedAt ? formatStoredDate(item.statusChangedAt) : "",
         ]);
         const csv =
           "\uFEFF" +
@@ -1170,14 +1232,14 @@
         );
       }
       function removeApplication(id) {
-        const items = readStorage("applications", []).filter(
-          (item) => item.id !== id,
-        );
-        writeStorage("applications", items);
+        const original = applicationsForWrite();
+        if (!original) return;
+        const items = original.filter((item) => item?.id !== id);
+        if (!writeStorage("applications", items)) return;
         renderApplications();
       }
       window.addEventListener("DOMContentLoaded", () => {
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
+        if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc =
           "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
         initializeAuth();
       });
