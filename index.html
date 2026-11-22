@@ -85,6 +85,15 @@
       .jobs-heading span { color:var(--teal); }
       .source-status { white-space:nowrap; display:inline-flex; align-items:center; gap:6px; border:1px solid #e3c9b1; color:#946039; background:#fff8eb; padding:7px 9px; border-radius:30px; font-size:10px; font-weight:700; margin-top:8px; }
       .source-status i { width:5px; height:5px; border-radius:50%; background:#b97a43; }
+      .source-status.connected { border-color:#bfe0d6; color:#176b64; background:#eef8f4; }
+      .source-status.connected i { background:#1e9e7f; }
+      .source-status.failed { border-color:#f0c9c4; color:#b03a2e; background:#fdf1ef; }
+      .source-status.failed i { background:#c0392b; }
+      .field-hint { margin:6px 0 0; color:#7c8c97; font-size:11px; line-height:1.7; }
+      .job-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:10px; }
+      .job-source { color:#7c8c97; font-size:12px; font-weight:600; }
+      .job-source-link { color:var(--teal); font-size:13px; font-weight:700; text-decoration:none; border:1px solid var(--line); border-radius:10px; padding:6px 12px; background:#fff; white-space:nowrap; }
+      .job-source-link:hover { text-decoration:underline; border-color:var(--teal); }
       .section-intro { color:#718096; font-size:13px; line-height:2.1; margin:16px 0 24px; max-width:620px; }
       .jobs-panel { background:#fffdf8; padding:25px; border:1px solid var(--line); border-radius:3px 20px 3px 20px; box-shadow:0 10px 24px #18333a05; }
       .panel-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:22px; }
@@ -353,9 +362,9 @@
           <div class="section-eyebrow"><span></span>الكويت ومصر فقط</div>
           <div class="jobs-heading-row">
             <h1 id="jobsHeading" class="jobs-heading">وجهتك القادمة،<br><span>تبدأ من هنا.</span></h1>
-            <span class="source-status"><i></i>المصادر غير متصلة</span>
+            <span class="source-status" id="jobsSourceBadge"><i></i>المصادر غير متصلة</span>
           </div>
-          <p class="section-intro">جهّز معاييرك الآن، واحتفظ ببحثك للعودة إليه. ستظهر الإعلانات الحقيقية بروابط مصادرها بعد إتمام الربط.</p>
+          <p class="section-intro" id="jobsHeroNote">جهّز معاييرك الآن، واحتفظ ببحثك للعودة إليه. ستظهر الإعلانات الحقيقية بروابط مصادرها بعد إتمام الربط.</p>
           <form id="jobsFilterForm" class="jobs-panel" onsubmit="applyJobFilters(event)">
             <div class="panel-heading"><div><p class="section-eyebrow small">ابحث في الاتجاه الصحيح</p><h2>ما الفرصة التي تبحث عنها؟</h2></div><span class="quiet-badge">الكويت ومصر</span></div>
             <label class="field-label" for="jobsQuery">المسمى أو الكلمات المفتاحية</label>
@@ -364,11 +373,11 @@
               <div><label class="field-label" for="jobsCountry">الدولة</label><select id="jobsCountry" class="field-input">
                 <option value="all">الكويت ومصر</option><option value="KW">الكويت</option><option value="EG">مصر</option>
               </select></div>
-              <div><label class="field-label" for="jobsWorkplace">نظام العمل</label><select id="jobsWorkplace" class="field-input"><option value="all">كل الأنظمة</option><option value="onsite">من مقر العمل</option><option value="hybrid">هجين</option><option value="remote">عن بُعد داخل الدولة</option></select></div>
+              <div><label class="field-label" for="jobsWorkplace">نظام العمل</label><select id="jobsWorkplace" class="field-input"><option value="all">كل الأنظمة</option><option value="onsite">من مقر العمل</option><option value="hybrid">هجين</option><option value="remote">عن بُعد داخل الدولة</option></select><p id="jobsWorkplaceNote" class="field-hint" hidden>المصدر الحالي لا يجلب نظام العمل، فهذا المعيار غير مُطبق.</p></div>
               <div><label class="field-label" for="jobsPeriod">تاريخ نشر الإعلان</label><select id="jobsPeriod" class="field-input"><option value="all">أي وقت</option><option value="day">آخر ٢٤ ساعة</option><option value="week">آخر أسبوع</option><option value="month">آخر شهر</option></select></div>
             </div>
             <div class="filter-actions"><button type="submit" class="primary-action">تطبيق معايير البحث <span aria-hidden="true">←</span></button><button type="button" class="secondary-action" onclick="saveJobSearch()">حفظ هذا البحث</button><button type="button" class="text-action" onclick="resetJobFilters()">مسح المعايير</button></div>
-            <p class="helper-copy">هذه الأدوات تجهّز بحثك فقط الآن. لا تُرسل سيرتك لأي مصدر، ولا تستهلك محاولة الاقتراحات المجانية.</p>
+            <p class="helper-copy" id="jobsToolsNote">هذه الأدوات تجهّز بحثك فقط الآن. لا تُرسل سيرتك لأي مصدر، ولا تستهلك محاولة الاقتراحات المجانية.</p>
           </form>
           <section class="saved-searches-section" aria-labelledby="savedSearchesHeading">
             <div class="section-heading-line"><h2 id="savedSearchesHeading">أبحاثك المحفوظة</h2><span class="local-badge">في هذا المتصفح فقط</span></div>
@@ -1029,10 +1038,44 @@
           return parsed.href;
         } catch { return null; }
       }
+      // Every copy line that depends on connection state comes from here, so the page
+      // never claims "sources linked" before they are or "not linked" after a failed load.
+      const JOBS_COPY = {
+        not_connected: {
+          badgeClass: "source-status", badge: "المصادر غير متصلة",
+          hero: "جهّز معاييرك الآن، واحتفظ ببحثك للعودة إليه. ستظهر الإعلانات الحقيقية بروابط مصادرها بعد إتمام الربط.",
+          tools: "هذه الأدوات تجهّز بحثك فقط الآن. لا تُرسل سيرتك لأي مصدر، ولا تستهلك محاولة الاقتراحات المجانية."
+        },
+        connected: {
+          badgeClass: "source-status connected", badge: "مصدر وظائف متصل",
+          hero: "إعلانات حقيقية من مصدر مربوط. كل بطاقة تعرض مصدرها وتقود إلى الإعلان الأصلي.",
+          tools: "تُطبق المعايير على آخر إعلانات وصلت من المصدر. لا تُرسل سيرتك لأي جهة من هنا؛ تكمل التقديم عبر رابط المصدر."
+        },
+        stale: {
+          badgeClass: "source-status", badge: "نسخة موثقة قديمة من المصدر",
+          hero: "تعذر تحديث الإعلانات الآن؛ المعروض أدناه آخر نسخة موثقة وقد لا تعكس إعلانات هذه اللحظة.",
+          tools: "تُطبق المعايير على النسخة الموثقة القديمة فقط. لا تُرسل سيرتك لأي جهة من هنا."
+        },
+        failed: {
+          badgeClass: "source-status failed", badge: "تعذر التحقق من المصادر",
+          hero: "لم نتمكن من التحقق من حالة مصادر الإعلانات الآن. حاول إعادة تحميل الصفحة لاحقاً.",
+          tools: "تعذر جلب الإعلانات الآن؛ لا تُرسل سيرتك لأي مصدر من هنا."
+        }
+      };
+      function setJobsCopy(state) {
+        const c = JOBS_COPY[state] || JOBS_COPY.not_connected;
+        const badge = document.getElementById("jobsSourceBadge");
+        badge.className = c.badgeClass;
+        badge.childNodes[badge.childNodes.length - 1].textContent = c.badge;
+        document.getElementById("jobsHeroNote").textContent = c.hero;
+        document.getElementById("jobsToolsNote").textContent = c.tools;
+      }
       // Source rows render as plain text; only the validated https link becomes clickable.
       function renderApiJobs(payload, f) {
         const list = document.getElementById("jobsList");
         list.textContent = "";
+        const sourceNames = {};
+        for (const src of (payload.sources || [])) for (const m of (src.markets || [])) sourceNames[m] = src.name;
         let shown = 0;
         for (const job of (payload.jobs || [])) {
           if (shown >= 60) break;
@@ -1049,6 +1092,16 @@
           meta.textContent = [job.company, job.location, COUNTRY_LABELS[job.market], job.postedAt ? "نُشر " + String(job.postedAt).slice(0,10) + " (بحسب المصدر)" : "تاريخ النشر غير متوفر من المصدر", job.salary].filter(Boolean).join(" · ");
           card.append(link, meta);
           if (job.snippet) { const sn = document.createElement("p"); sn.className = "job-snippet"; sn.textContent = job.snippet; card.append(sn); }
+          const foot = document.createElement("p");
+          foot.className = "job-foot";
+          const src = document.createElement("span");
+          src.className = "job-source";
+          src.textContent = "المصدر: " + (sourceNames[job.market] || job.source || "غير محدد");
+          const original = document.createElement("a");
+          original.className = "job-source-link"; original.href = href; original.target = "_blank"; original.rel = "noopener noreferrer";
+          original.textContent = "الإعلان الأصلي ↗";
+          foot.append(src, original);
+          card.append(foot);
           list.append(card);
           shown++;
         }
@@ -1060,6 +1113,8 @@
         document.getElementById("jobsList").hidden = !connected;
         document.getElementById("jobsStaleNote").hidden = !(connected && jobsPayload.stale);
         document.getElementById("jobsWorkplace").disabled = !!connected; // current source data carries no work-arrangement field
+        document.getElementById("jobsWorkplaceNote").hidden = !connected;
+        setJobsCopy(!connected ? "not_connected" : (jobsPayload.stale ? "stale" : "connected"));
         if (!connected) return 0;
         const shown = renderApiJobs(jobsPayload, readJobFilters());
         const live = document.getElementById("jobsLiveState");
@@ -1074,7 +1129,12 @@
           jobsPayload = await response.json();
           paintApiJobs();
         } catch {
-          // A failed load must not look like an empty market; the not-linked panel stays as-is.
+          // A failed load must not look like an empty market, nor claim the source was never linked.
+          setJobsCopy("failed");
+          document.getElementById("jobsConnectionState").hidden = true;
+          const live = document.getElementById("jobsLiveState");
+          live.hidden = false;
+          document.getElementById("jobsLiveNote").textContent = "تعذر تحميل الإعلانات أو التحقق من حالة المصادر الآن. هذا ليس تأكيداً بعدم وجود وظائف مطابقة؛ أعد المحاولة لاحقاً.";
         }
       }
       function readJobFilters() {
