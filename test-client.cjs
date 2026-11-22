@@ -41,26 +41,33 @@ test('storage failure returns false and keeps form',()=>{Object.defineProperty(w
  assert.equal(w.document.querySelector('#searchBtn').disabled,false);passed++; console.log('PASS request cleanup enables button');
  assert.equal(run('getSearchCount()'),0);passed++; console.log('PASS empty result does not consume free search');
  // --- source-ready jobs list rendering (fixtures only; no provider contacted) ---
- const jobsFixture={status:'connected',stale:false,jobs:[
+ const jobsFixture={status:'connected',stale:false,sources:[{id:'jooble-kw',name:'Jooble Kuwait',markets:['KW']},{id:'jooble-eg',name:'Jooble Egypt',markets:['EG']}],jobs:[
   {title:'<b>مهندس مدني</b>',company:'شركة الاختبار',location:'مدينة الكويت',market:'KW',postedAt:new Date().toISOString(),url:'https://employer.example/jobs/1',snippet:'وصف الإعلان',salary:'800 KWD',source:'jooble'},
   {title:'محاسب',company:'شركة مصر',market:'EG',postedAt:'2020-01-01T00:00:00Z',url:'https://employer.example/jobs/2',source:'jooble'},
   {title:'رابط مكسور',market:'KW',url:'http://insecure.example/jobs/3',source:'jooble'}]};
+ const badgeText=()=>w.document.getElementById('jobsSourceBadge').childNodes[1].textContent;
  w.fetch=async()=>({ok:true,json:async()=>jobsFixture});
  await run('loadApiJobs()');
  test('connected payload renders cards and hides not-linked panel',()=>{assert.equal(w.document.getElementById('jobsConnectionState').hidden,true);assert.equal(w.document.getElementById('jobsList').hidden,false)});
  test('row with unsafe link is never rendered',()=>assert.equal(w.document.querySelectorAll('#jobsList .job-card').length,2));
  test('source text is never interpreted as HTML',()=>{assert.equal(w.document.querySelectorAll('#jobsList b').length,0);assert.ok(w.document.querySelector('#jobsList .job-title').textContent.includes('مهندس مدني'))});
  test('listing link opens the original posting safely',()=>{const a=w.document.querySelector('#jobsList a');assert.equal(a.href,'https://employer.example/jobs/1');assert.equal(a.rel,'noopener noreferrer');assert.equal(a.target,'_blank')});
+ test('connected state rewrites the badge and hero honestly',()=>{assert.equal(badgeText(),'مصدر وظائف متصل');assert.equal(w.document.getElementById('jobsSourceBadge').className,'source-status connected');assert.ok(w.document.getElementById('jobsHeroNote').textContent.includes('مصدر مربوط'));assert.ok(w.document.getElementById('jobsToolsNote').textContent.includes('آخر إعلانات وصلت من المصدر'))});
+ test('workplace filter is disabled and the reason is visible',()=>{assert.equal(w.document.getElementById('jobsWorkplace').disabled,true);assert.equal(w.document.getElementById('jobsWorkplaceNote').hidden,false)});
+ test('every card attributes its source and links the original posting',()=>{const card=w.document.querySelector('#jobsList .job-card');assert.ok(card.querySelector('.job-source').textContent.includes('Jooble Kuwait'));const o=card.querySelector('.job-source-link');assert.equal(o.href,'https://employer.example/jobs/1');assert.equal(o.rel,'noopener noreferrer');assert.equal(o.target,'_blank')});
  test('period filter drops rows without a source date honestly',()=>{w.document.getElementById('jobsPeriod').value='week';w.applyJobFilters();assert.equal(w.document.querySelectorAll('#jobsList .job-card').length,1)});
  test('country filter narrows by market',()=>{w.document.getElementById('jobsPeriod').value='all';w.document.getElementById('jobsCountry').value='EG';w.applyJobFilters();const cards=w.document.querySelectorAll('#jobsList .job-card');assert.equal(cards.length,1);assert.ok(cards[0].textContent.includes('محاسب'))});
  w.fetch=async()=>({ok:true,json:async()=>({...jobsFixture,stale:true,status:'not_connected'})});
  await run('loadApiJobs()');
  test('stale snapshot is labeled, not hidden',()=>assert.equal(w.document.getElementById('jobsStaleNote').hidden,false));
+ test('stale state rewrites the badge as an old snapshot',()=>{assert.equal(badgeText(),'نسخة موثقة قديمة من المصدر');assert.ok(w.document.getElementById('jobsHeroNote').textContent.includes('آخر نسخة موثقة'))});
  w.fetch=async()=>({ok:true,json:async()=>({status:'not_connected',stale:false,jobs:[],sources:[],requestedMarkets:['KW','EG'],connectedMarkets:[],message:'x'})});
  await run('loadApiJobs()');
  test('fresh not_connected keeps the honest empty state',()=>{assert.equal(w.document.getElementById('jobsConnectionState').hidden,false);assert.equal(w.document.getElementById('jobsList').hidden,true)});
+ test('fresh not_connected restores the default copy and enabled controls',()=>{assert.equal(badgeText(),'المصادر غير متصلة');assert.equal(w.document.getElementById('jobsSourceBadge').className,'source-status');assert.equal(w.document.getElementById('jobsWorkplace').disabled,false);assert.equal(w.document.getElementById('jobsWorkplaceNote').hidden,true)});
  w.fetch=async()=>({ok:false,status:500});
  await run('loadApiJobs()');
- test('listing load failure never masquerades as an empty market',()=>assert.equal(w.document.getElementById('jobsConnectionState').hidden,false));
+ test('listing load failure never masquerades as an empty market',()=>{assert.equal(w.document.getElementById('jobsConnectionState').hidden,true);assert.equal(w.document.getElementById('jobsLiveState').hidden,false);assert.ok(w.document.getElementById('jobsLiveNote').textContent.includes('تعذر'))});
+ test('load failure is distinct from not_connected',()=>{assert.equal(badgeText(),'تعذر التحقق من المصادر');assert.equal(w.document.getElementById('jobsSourceBadge').className,'source-status failed');assert.ok(w.document.getElementById('jobsHeroNote').textContent.includes('لم نتمكن'))});
  w.close(); console.log('CLIENT TESTS',passed);
 })().catch(e=>{console.error(e);w.close();process.exitCode=1});
