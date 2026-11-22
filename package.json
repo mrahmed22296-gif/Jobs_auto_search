@@ -6,6 +6,6 @@
     "jsdom": "^31.0.1"
   },
   "scripts": {
-    "test": "node test-api.mjs && node test-client.cjs"
+    "test": "node test-api.mjs && node test-client.cjs && node test-workspace.cjs && node test-jobs.mjs"
   }
 }
