@@ -113,6 +113,12 @@
       .results-toolbar { margin:30px 0 13px; flex-wrap:wrap; }
       .filter-summary { color:#7c8c97; font-size:10px; overflow-wrap:anywhere; }
       .source-empty { border:1px dashed #bdcfc4; border-radius:14px; background:#f0f4ee8c; padding:32px 24px; text-align:center; }
+      .jobs-list { list-style:none; margin:16px 0 0; padding:0; display:grid; gap:12px; }
+      .job-card { background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:15px 17px; }
+      .job-card .job-title { color:#18333a; font-weight:800; font-size:15px; text-decoration:none; }
+      .job-card .job-title:hover { color:var(--teal); text-decoration:underline; }
+      .job-card .job-meta { color:#5c6f6a; font-size:12.5px; margin:6px 0 0; }
+      .job-card .job-snippet { color:#43564f; font-size:13px; margin:8px 0 0; line-height:1.7; }
       .empty-symbol { width:44px; height:44px; border:1px solid #cbd9d0; background:#fafbf7; border-radius:12px; margin:0 auto 15px; display:grid; place-items:center; color:var(--teal); font-size:21px; }
       .source-empty h2 { font-size:19px; font-weight:700; margin:16px 0 10px; }
       .source-empty p { max-width:510px; margin:0 auto 14px; font-size:12px; line-height:2; color:#7a898d; }
@@ -377,6 +383,9 @@
             <p id="jobsSelectionNote" class="selection-note">يمكنك حفظ معاييرك والعودة بعد الربط، أو تنظيم فرص LinkedIn التي راجعتها بنفسك.</p>
             <button type="button" class="secondary-action" onclick="setView('applications')">افتح لوحة طلباتك</button>
           </div>
+          <p id="jobsStaleNote" class="selection-note" style="margin-top:12px" hidden>هذه آخر نسخة موثقة من المصدر بعد تعذر التحديث، وقد لا تعكس إعلانات هذه اللحظة.</p>
+          <ul id="jobsList" class="jobs-list" hidden></ul>
+          <div id="jobsLiveState" class="source-empty" role="status" hidden><h2>الإعلانات</h2><p id="jobsLiveNote"></p></div>
           <details class="coverage-details"><summary>ما الذي سيكون واضحاً مع كل إعلان؟</summary><p>الشركة، الدولة ومكان العمل، المصدر ورابط الإعلان، والتاريخ أو الراتب عندما يوفرهما المصدر. مكان الوظيفة لا يضمن أهلية الإقامة أو التأشيرة. ربط المصادر والتحقق من التغطية خطوة لاحقة.</p><div class="country-chips"><span>الكويت</span><span>مصر</span></div><p class="helper-copy">الدول هنا نطاق البحث المطلوب، وليست ادعاءً بأن مصدراً يغطيها جميعاً حالياً.</p></details>
         </section>
 
@@ -989,7 +998,7 @@
           button.setAttribute("aria-current", active ? "page" : "false");
         });
         if (view === "applications") renderApplications();
-        if (view === "jobs") renderSavedJobSearches();
+        if (view === "jobs") { renderSavedJobSearches(); loadApiJobs(); }
         // Wait for the new panel layout, then reset scrolling below the sticky header/nav.
         // Otherwise browser scroll anchoring can leave the new panel heading hidden.
         if (window.requestAnimationFrame) window.requestAnimationFrame(() => window.scrollTo({top:0,left:0,behavior:"instant"}));
@@ -997,7 +1006,77 @@
       const COUNTRY_LABELS = Object.freeze({all:"الكويت ومصر",KW:"الكويت",EG:"مصر"});
       const WORKPLACE_LABELS = Object.freeze({all:"كل الأنظمة",onsite:"من مقر العمل",hybrid:"هجين",remote:"عن بُعد داخل الدولة"});
       const PERIOD_LABELS = Object.freeze({all:"أي وقت",day:"آخر ٢٤ ساعة",week:"آخر أسبوع",month:"آخر شهر"});
+      const PERIOD_MS = Object.freeze({day:24*60*60*1000, week:7*24*60*60*1000, month:30*24*60*60*1000});
       // No provider is connected. Never fill this UI with generated or demo job rows.
+      let jobsPayload = null; // last /api/jobs payload; null until the first fetch lands
+      function apiJobMatchesFilters(job, f) {
+        if (f.country !== "all" && job.market !== f.country) return false;
+        if (f.query) {
+          const hay = [job.title, job.company, job.location, job.snippet].filter(Boolean).join(" ").toLowerCase();
+          if (!hay.includes(f.query.toLowerCase())) return false;
+        }
+        if (f.period !== "all") {
+          const posted = Date.parse(job.postedAt || "");
+          if (!Number.isFinite(posted)) return false; // never invent a date for a period filter
+          if (Date.now() - posted > PERIOD_MS[f.period]) return false;
+        }
+        return true;
+      }
+      function safeListingHref(url) {
+        try {
+          const parsed = new URL(String(url || ""));
+          if (parsed.protocol !== "https:" || parsed.username || parsed.password) return null;
+          return parsed.href;
+        } catch { return null; }
+      }
+      // Source rows render as plain text; only the validated https link becomes clickable.
+      function renderApiJobs(payload, f) {
+        const list = document.getElementById("jobsList");
+        list.textContent = "";
+        let shown = 0;
+        for (const job of (payload.jobs || [])) {
+          if (shown >= 60) break;
+          if (!apiJobMatchesFilters(job, f)) continue;
+          const href = safeListingHref(job.url);
+          if (!href || !job.title) continue;
+          const card = document.createElement("li");
+          card.className = "job-card";
+          const link = document.createElement("a");
+          link.className = "job-title"; link.href = href; link.target = "_blank"; link.rel = "noopener noreferrer";
+          link.textContent = job.title;
+          const meta = document.createElement("p");
+          meta.className = "job-meta";
+          meta.textContent = [job.company, job.location, COUNTRY_LABELS[job.market], job.postedAt ? "نُشر " + String(job.postedAt).slice(0,10) + " (بحسب المصدر)" : "تاريخ النشر غير متوفر من المصدر", job.salary].filter(Boolean).join(" · ");
+          card.append(link, meta);
+          if (job.snippet) { const sn = document.createElement("p"); sn.className = "job-snippet"; sn.textContent = job.snippet; card.append(sn); }
+          list.append(card);
+          shown++;
+        }
+        return shown;
+      }
+      function paintApiJobs() {
+        const connected = jobsPayload && !(jobsPayload.status === "not_connected" && !jobsPayload.stale);
+        document.getElementById("jobsConnectionState").hidden = !!connected;
+        document.getElementById("jobsList").hidden = !connected;
+        document.getElementById("jobsStaleNote").hidden = !(connected && jobsPayload.stale);
+        document.getElementById("jobsWorkplace").disabled = !!connected; // current source data carries no work-arrangement field
+        if (!connected) return 0;
+        const shown = renderApiJobs(jobsPayload, readJobFilters());
+        const live = document.getElementById("jobsLiveState");
+        live.hidden = shown > 0;
+        if (shown === 0) document.getElementById("jobsLiveNote").textContent = "لا توجد إعلانات مطابقة لمعاييرك في آخر جلب من المصدر. جرّب توسيع المعايير.";
+        return shown;
+      }
+      async function loadApiJobs() {
+        try {
+          const response = await fetch("/api/jobs");
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          jobsPayload = await response.json();
+          paintApiJobs();
+        } catch {
+          // A failed load must not look like an empty market; the not-linked panel stays as-is.
+        }
+      }
       function readJobFilters() {
         const country = document.getElementById("jobsCountry").value;
         const workplace = document.getElementById("jobsWorkplace").value;
@@ -1011,6 +1090,7 @@
         event?.preventDefault();
         const f = readJobFilters();
         document.getElementById("jobsFilterSummary").textContent = [COUNTRY_LABELS[f.country],WORKPLACE_LABELS[f.workplace],PERIOD_LABELS[f.period]].join(" · ");
+        if (jobsPayload && !(jobsPayload.status === "not_connected" && !jobsPayload.stale)) { paintApiJobs(); return; }
         document.getElementById("jobsSelectionNote").textContent = f.query ? `بحثك: ${f.query}. معاييرك جاهزة، لكن لا يمكن جلب إعلانات قبل ربط مصدر فعلي.` : "معاييرك جاهزة. يمكنك حفظ البحث؛ ربط مصادر الإعلانات لم يكتمل بعد.";
       }
       function resetJobFilters(notify = true) {
@@ -1429,6 +1509,7 @@
         if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc =
           "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
         initializeAuth();
+        loadApiJobs();
       });
     </script>
   </body>
