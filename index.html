@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0f4f4a" />
+    <meta name="theme-color" content="#0c4a6e" />
     <title>مسار | وظائف الكويت ومصر</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -15,27 +15,38 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <style>
       :root {
-        --ink: #18333a;
-        --teal: #176b64;
-        --teal-dark: #0f4f4a;
-        --paper: #f6f3eb;
-        --line: #d8ddd7;
-        --orange: #d95d39;
+        --ink: #0c2942;
+        --teal: #0369a1;
+        --teal-dark: #0c4a6e;
+        --paper: #f0f9ff;
+        --line: #dbeafe;
+        --orange: #f97316;
+        --primary: #0ea5e9;
+        --primary-light: #e0f2fe;
+        --border-strong: #7dd3fc;
+        --muted: #5b7285;
+        --shadow-sm: 0 1px 2px rgba(14, 165, 233, 0.08);
+        --shadow: 0 4px 18px rgba(14, 165, 233, 0.12), 0 1px 3px rgba(12, 41, 66, 0.06);
       }
       * {
         box-sizing: border-box;
       }
       body {
         margin: 0;
-        background: var(--paper);
+        background:
+          radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14, 165, 233, 0.12), transparent),
+          radial-gradient(ellipse 60% 40% at 100% 0%, rgba(249, 115, 22, 0.06), transparent),
+          var(--paper);
         color: var(--ink);
-        font-family: "Cairo", sans-serif;
+        font-family: 'Tajawal', system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
       }
       h1,
       h2,
       h3,
       .brand {
-        font-family: "Alexandria", sans-serif;
+        font-family: 'Tajawal', sans-serif;
       }
       button {
         transition:
@@ -47,12 +58,12 @@
         transform: scale(0.98);
       }
       .path-dots {
-        background-image: radial-gradient(#91a49a 1px, transparent 1px);
+        background-image: radial-gradient(#7dd3fc 1px, transparent 1px);
         background-size: 10px 10px;
       }
       .route-line {
         height: 1px;
-        border-top: 1px dashed #9eb2a8;
+        border-top: 1px dashed #7dd3fc;
         flex: 1;
         min-width: 20px;
       }
@@ -60,84 +71,87 @@
         width: 10px;
         height: 10px;
         border-radius: 50%;
-        border: 2px solid #9fb1a8;
-        background: #f6f3eb;
+        border: 2px solid #93c5fd;
+        background: #f0f9ff;
       }
       .status-dot.done {
         border-color: var(--orange);
         background: var(--orange);
-        box-shadow: 0 0 0 4px rgba(217, 93, 57, 0.12);
+        box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
       }
       .modal-backdrop {
-        background: rgba(17, 40, 44, 0.48);
+        background: rgba(3, 42, 74, 0.5);
         backdrop-filter: blur(5px);
       }
 
-      :focus-visible { outline: 3px solid #d95d39; outline-offset: 3px; }
+      :focus-visible { outline: 3px solid #0ea5e9; outline-offset: 3px; }
       .mobile-nav { position:sticky; top:72px; z-index:25; display:flex; padding:10px 20px; gap:6px; border-bottom:1px solid var(--line); background:var(--paper); }
-      .mobile-nav button { flex:1; padding:11px 5px; border:0; border-radius:10px; font-size:11px; font-weight:700; color:#647875; }
-      .mobile-nav button.active { background:#e4eee8; color:var(--teal); }
+      .mobile-nav button { flex:1; padding:11px 5px; border:0; border-radius:10px; font-size:11px; font-weight:700; color:#5b7285; }
+      .mobile-nav button.active { background:#e0f2fe; color:var(--teal); }
       .section-eyebrow { display:flex; align-items:center; gap:10px; font-size:11px; color:var(--teal); font-weight:700; margin:0 0 15px; }
       .section-eyebrow>span { width:25px; height:1px; background:var(--orange); }
-      .section-eyebrow.small { font-size:10px; margin:0 0 5px; color:#59726b; }
+      .section-eyebrow.small { font-size:10px; margin:0 0 5px; color:#5b7285; }
       .jobs-heading-row { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
       .jobs-heading { font-size:clamp(31px,3.6vw,48px); line-height:1.45; margin:0; font-weight:800; letter-spacing:-1.2px; }
       .jobs-heading span { color:var(--teal); }
-      .source-status { white-space:nowrap; display:inline-flex; align-items:center; gap:6px; border:1px solid #e3c9b1; color:#946039; background:#fff8eb; padding:7px 9px; border-radius:30px; font-size:10px; font-weight:700; margin-top:8px; }
-      .source-status i { width:5px; height:5px; border-radius:50%; background:#b97a43; }
-      .source-status.connected { border-color:#bfe0d6; color:#176b64; background:#eef8f4; }
-      .source-status.connected i { background:#1e9e7f; }
-      .source-status.failed { border-color:#f0c9c4; color:#b03a2e; background:#fdf1ef; }
-      .source-status.failed i { background:#c0392b; }
-      .field-hint { margin:6px 0 0; color:#7c8c97; font-size:11px; line-height:1.7; }
+      .source-status { white-space:nowrap; display:inline-flex; align-items:center; gap:6px; border:1px solid #fdba74; color:#c2410c; background:#ffedd5; padding:7px 9px; border-radius:30px; font-size:10px; font-weight:700; margin-top:8px; }
+      .source-status i { width:5px; height:5px; border-radius:50%; background:#f97316; }
+      .source-status.connected { border-color:#bbf7d0; color:#0369a1; background:#f0fdf4; }
+      .source-status.connected i { background:#16a34a; }
+      .source-status.failed { border-color:#fecaca; color:#b91c1c; background:#fee2e2; }
+      .source-status.failed i { background:#dc2626; }
+      .field-hint { margin:6px 0 0; color:#5b7285; font-size:11px; line-height:1.7; }
       .job-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:10px; }
-      .job-source { color:#7c8c97; font-size:12px; font-weight:600; }
+      .job-source { color:#5b7285; font-size:12px; font-weight:600; }
       .job-source-link { color:var(--teal); font-size:13px; font-weight:700; text-decoration:none; border:1px solid var(--line); border-radius:10px; padding:6px 12px; background:#fff; white-space:nowrap; }
       .job-source-link:hover { text-decoration:underline; border-color:var(--teal); }
-      .section-intro { color:#718096; font-size:13px; line-height:2.1; margin:16px 0 24px; max-width:620px; }
-      .jobs-panel { background:#fffdf8; padding:25px; border:1px solid var(--line); border-radius:3px 20px 3px 20px; box-shadow:0 10px 24px #18333a05; }
+      .section-intro { color:#5b7285; font-size:13px; line-height:2.1; margin:16px 0 24px; max-width:620px; }
+      .jobs-panel { background:#ffffff; padding:26px; border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); }
       .panel-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:22px; }
       .panel-heading h2 { font-size:18px; font-weight:700; margin:0; }
-      .quiet-badge { display:inline-block; font-size:10px; font-weight:700; color:#59726b; background:#eef3ed; padding:5px 8px; border-radius:6px; white-space:nowrap; }
-      .field-label { display:block; font-size:11px; font-weight:700; color:#53666b; margin-bottom:8px; }
-      .field-input { width:100%; min-width:0; border:1px solid var(--line); background:#fcfbf7; color:var(--ink); border-radius:10px; padding:11px 12px; font-family:inherit; font-size:12px; min-height:45px; }
+      .quiet-badge { display:inline-block; font-size:10px; font-weight:700; color:#0369a1; background:var(--primary-light); padding:5px 10px; border-radius:999px; white-space:nowrap; }
+      .field-label { display:block; font-size:13px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+      .field-input { width:100%; min-width:0; border:1.5px solid var(--line); background:#f6fbff; color:var(--ink); border-radius:8px; padding:12px 14px; font-family:inherit; font-size:14px; min-height:45px; transition:border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+      .field-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(14, 165, 233, 0.15); background:#ffffff; outline:none; }
+      .field-input:disabled { opacity:0.65; cursor:not-allowed; }
       .filter-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:18px; }
-      .filter-actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:22px; padding-top:18px; border-top:1px solid #ebe8df; }
+      .filter-actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:22px; padding-top:18px; border-top:1px solid #dbeafe; }
       .primary-action,.secondary-action { border-radius:10px; padding:11px 15px; min-height:44px; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; }
-      .primary-action { color:white; background:var(--ink); border:1px solid var(--ink); display:flex; align-items:center; justify-content:center; gap:20px; }
-      .primary-action:hover { background:var(--teal); }
-      .secondary-action { color:var(--teal); border:1px solid #aac4b8; background:#fffdf8; }
-      .secondary-action:hover { background:#eef4ef; }
-      .text-action { background:transparent; border:0; color:#6b7b81; font-size:11px; padding:8px; cursor:pointer; font-family:inherit; }
-      .helper-copy { margin:13px 0 0; color:#7c8c97; font-size:10px; line-height:1.9; }
+      .primary-action { color:white; background:linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%); border:0; display:flex; align-items:center; justify-content:center; gap:20px; box-shadow:0 4px 14px rgba(14, 165, 233, 0.35); }
+      .primary-action:hover { filter:brightness(1.08); transform:translateY(-2px); box-shadow:0 6px 20px rgba(14, 165, 233, 0.4); }
+      .secondary-action { color:var(--teal); border:1px solid #7dd3fc; background:#ffffff; }
+      .secondary-action:hover { background:#f0f9ff; }
+      .text-action { background:transparent; border:0; color:#5b7285; font-size:11px; padding:8px; cursor:pointer; font-family:inherit; }
+      .helper-copy { margin:13px 0 0; color:#5b7285; font-size:10px; line-height:1.9; }
       .saved-searches-section { margin-top:25px; }
       .section-heading-line,.results-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
       .section-heading-line h2,.results-toolbar h2 { font-size:14px; font-weight:700; margin:0; }
-      .local-badge { color:#83938d; font-size:9px; }
+      .local-badge { color:#5b7285; font-size:9px; }
       .saved-searches-list { display:grid; gap:8px; margin-top:12px; }
-      .saved-search-card { display:flex; align-items:center; gap:10px; border:1px solid var(--line); background:#fffdf8; border-radius:10px; padding:11px 12px; }
+      .saved-search-card { display:flex; align-items:center; gap:10px; border:1px solid var(--line); background:#ffffff; border-radius:10px; padding:11px 12px; }
       .saved-search-load { flex:1; min-width:0; text-align:right; border:0; background:none; font-family:inherit; cursor:pointer; }
       .saved-search-load strong,.saved-search-load span { display:block; overflow-wrap:anywhere; }
-      .saved-search-load strong { color:var(--ink); font-size:12px; }.saved-search-load span { color:#81908d; font-size:10px; margin-top:4px; }
+      .saved-search-load strong { color:var(--ink); font-size:12px; }.saved-search-load span { color:#5b7285; font-size:10px; margin-top:4px; }
       .results-toolbar { margin:30px 0 13px; flex-wrap:wrap; }
-      .filter-summary { color:#7c8c97; font-size:10px; overflow-wrap:anywhere; }
-      .source-empty { border:1px dashed #bdcfc4; border-radius:14px; background:#f0f4ee8c; padding:32px 24px; text-align:center; }
+      .filter-summary { color:#5b7285; font-size:10px; overflow-wrap:anywhere; }
+      .source-empty { border:1px dashed #93c5fd; border-radius:14px; background:#f0f4ee8c; padding:32px 24px; text-align:center; }
       .jobs-list { list-style:none; margin:16px 0 0; padding:0; display:grid; gap:12px; }
-      .job-card { background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:15px 17px; }
-      .job-card .job-title { color:#18333a; font-weight:800; font-size:15px; text-decoration:none; }
+      .job-card { background:#ffffff; border:1px solid var(--line); border-radius:16px; padding:15px 17px; box-shadow:var(--shadow-sm); transition:box-shadow 0.2s ease, transform 0.2s ease; }
+      .job-card:hover { box-shadow:var(--shadow); }
+      .job-card .job-title { color:#0c2942; font-weight:800; font-size:15px; text-decoration:none; }
       .job-card .job-title:hover { color:var(--teal); text-decoration:underline; }
-      .job-card .job-meta { color:#5c6f6a; font-size:12.5px; margin:6px 0 0; }
-      .job-card .job-snippet { color:#43564f; font-size:13px; margin:8px 0 0; line-height:1.7; }
-      .empty-symbol { width:44px; height:44px; border:1px solid #cbd9d0; background:#fafbf7; border-radius:12px; margin:0 auto 15px; display:grid; place-items:center; color:var(--teal); font-size:21px; }
+      .job-card .job-meta { color:#5b7285; font-size:12.5px; margin:6px 0 0; }
+      .job-card .job-snippet { color:#33546e; font-size:13px; margin:8px 0 0; line-height:1.7; }
+      .empty-symbol { width:44px; height:44px; border:1px solid #bae6fd; background:#f6fbff; border-radius:12px; margin:0 auto 15px; display:grid; place-items:center; color:var(--teal); font-size:21px; }
       .source-empty h2 { font-size:19px; font-weight:700; margin:16px 0 10px; }
-      .source-empty p { max-width:510px; margin:0 auto 14px; font-size:12px; line-height:2; color:#7a898d; }
-      .source-empty p.selection-note { font-size:10px; color:#607c74; }
+      .source-empty p { max-width:510px; margin:0 auto 14px; font-size:12px; line-height:2; color:#5b7285; }
+      .source-empty p.selection-note { font-size:10px; color:#5b7285; }
       .source-empty button { margin-top:5px; }
-      .coverage-details { margin-top:20px; border-bottom:1px solid var(--line); padding:0 0 15px; color:#728981; font-size:11px; line-height:2; }
-      .coverage-details summary { font-weight:700; cursor:pointer; color:#4b6960; }
-      .country-chips { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }.country-chips span { background:#e6eee8; border-radius:5px; padding:3px 8px; }
-      .tracker-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border:1px solid var(--line); border-radius:12px; margin:24px 0 20px; background:#fffdf8; padding:18px 0; }
-      .tracker-stats>div { text-align:center; border-left:1px solid #e7e9df; }.tracker-stats>div:last-child { border:0; }.tracker-stats span { font:700 25px Alexandria,sans-serif; color:var(--teal); }.tracker-stats p { font-size:10px; color:#87958e; margin:7px 0 0; }
+      .coverage-details { margin-top:20px; border-bottom:1px solid var(--line); padding:0 0 15px; color:#5b7285; font-size:11px; line-height:2; }
+      .coverage-details summary { font-weight:700; cursor:pointer; color:#0369a1; }
+      .country-chips { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }.country-chips span { background:#e0f2fe; border-radius:5px; padding:3px 8px; }
+      .tracker-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border:1px solid var(--line); border-radius:12px; margin:24px 0 20px; background:#ffffff; padding:18px 0; }
+      .tracker-stats>div { text-align:center; border-left:1px solid #dbeafe; }.tracker-stats>div:last-child { border:0; }.tracker-stats span { font:700 25px 'IBM Plex Mono',monospace; color:var(--teal); direction:ltr; display:inline-block; }.tracker-stats p { font-size:10px; color:#5b7285; margin:7px 0 0; }
       .tracker-filters { display:grid; grid-template-columns:2fr 1fr; gap:12px; }
       @media(min-width:1024px) {.mobile-nav { display:none; }}
       @media(max-width:639px) {.jobs-heading-row { display:block; }.source-status { margin-top:15px; }.jobs-panel { padding:19px 16px; }.panel-heading { align-items:flex-start; }.panel-heading h2 { font-size:16px; }.filter-grid { grid-template-columns:1fr; gap:15px; }.filter-actions .primary-action { width:100%; }.filter-actions .secondary-action { flex:1; }.source-empty { padding:25px 18px; }.source-empty h2 { font-size:17px; }.section-intro { margin-top:15px; }.tracker-filters { grid-template-columns:1fr; }}
@@ -150,14 +164,14 @@
       class="min-h-screen px-4 flex items-center justify-center"
     >
       <div
-        class="w-full max-w-md bg-[#fffdf8] border border-[#d8ddd7] rounded-[28px] p-8 shadow-2xl shadow-[#18333a]/10 text-center"
+        class="w-full max-w-md bg-[#ffffff] border border-[#dbeafe] rounded-[28px] p-8 shadow-2xl shadow-[#0c2942]/10 text-center"
       >
         <div
-          class="w-16 h-16 mx-auto mb-5 bg-[#18333a] text-white rounded-2xl grid place-items-center text-2xl font-bold"
+          class="w-16 h-16 mx-auto mb-5 bg-[#0c2942] text-white rounded-2xl grid place-items-center text-2xl font-bold"
         >
           ↗
         </div>
-        <p class="text-[#176b64] text-xs font-bold tracking-wide">
+        <p class="text-[#0369a1] text-xs font-bold tracking-wide">
           منظّم البحث والتقديم
         </p>
         <h1 class="text-2xl font-extrabold mt-2 mb-3">مسار وظيفي أوضح</h1>
@@ -167,7 +181,7 @@
         <button
           id="googleBtn"
           type="button"
-          class="w-full min-h-12 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-sm flex justify-center items-center gap-3 hover:border-[#176b64]"
+          class="w-full min-h-12 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-sm flex justify-center items-center gap-3 hover:border-[#0369a1]"
           onclick="loginWithGoogle()"
         >
           <span
@@ -187,38 +201,38 @@
       class="hidden min-h-screen px-4 items-center justify-center"
     >
       <div
-        class="w-full max-w-md bg-[#fffdf8] border border-[#d8ddd7] rounded-[28px] p-7 shadow-2xl shadow-[#18333a]/10 text-center"
+        class="w-full max-w-md bg-[#ffffff] border border-[#dbeafe] rounded-[28px] p-7 shadow-2xl shadow-[#0c2942]/10 text-center"
       >
         <div
-          class="w-14 h-14 mx-auto mb-4 bg-[#d95d39] text-white rounded-2xl grid place-items-center text-xl font-bold"
+          class="w-14 h-14 mx-auto mb-4 bg-[#f97316] text-white rounded-2xl grid place-items-center text-xl font-bold"
         >
           د
         </div>
-        <p class="text-[#176b64] text-xs font-bold tracking-wide">
+        <p class="text-[#0369a1] text-xs font-bold tracking-wide">
           اشتراك مسار
         </p>
         <h2 class="text-xl font-extrabold mt-2 mb-2">
           انتهت المحاولة المجانية
         </h2>
         <p class="text-sm text-slate-500 leading-7 mb-5">
-          اشترك مقابل <strong class="text-[#d95d39]">1 دينار فقط</strong> للوصول
+          اشترك مقابل <strong class="text-[#f97316]">1 دينار فقط</strong> للوصول
           إلى البحث غير المحدود وتنظيم طلبات التقديم.
         </p>
-        <div class="bg-[#f5f2ea] rounded-2xl p-4 border border-[#e5e4dc]">
-          <p class="m-0 text-xs font-bold text-[#18333a]">
+        <div class="bg-[#f0f9ff] rounded-2xl p-4 border border-[#dbeafe]">
+          <p class="m-0 text-xs font-bold text-[#0c2942]">
             الدفع عبر ومض (WAMD)
           </p>
           <img
             src="https://i.ibb.co/1GvzKs8r/Whats-App-Image-2026-08-06-at-4-44-31-PM-1.jpg"
             alt="رمز QR للدفع عبر ومض"
-            class="w-52 max-w-full mx-auto my-3 rounded-xl border border-[#d8ddd7]"
+            class="w-52 max-w-full mx-auto my-3 rounded-xl border border-[#dbeafe]"
           />
           <p class="m-0 text-[11px] leading-6 text-slate-500">
             امسح رمز QR من تطبيق التمويل أون لاين أو أي تطبيق يدعم ومض.
           </p>
         </div>
         <div
-          class="mt-4 text-right bg-[#fff4dc] border border-[#f3dfb8] rounded-xl p-3 text-[11px] leading-6 text-[#80591b]"
+          class="mt-4 text-right bg-[#ffedd5] border border-[#fdba74] rounded-xl p-3 text-[11px] leading-6 text-[#9a3412]"
         >
           <strong>خطوات التفعيل:</strong><br />1. ادفع 1 دينار عبر ومض.<br />2.
           خذ صورة للإيصال وأرسلها عبر واتساب.<br />3. ستصلك رسالة بكود التفعيل.
@@ -230,18 +244,18 @@
         >
           إرسال إيصال الدفع على واتساب
         </button>
-        <div class="mt-5 pt-5 border-t border-[#e5e4dc]">
-          <p class="m-0 text-xs font-bold text-[#18333a]">لديك كود تفعيل؟</p>
+        <div class="mt-5 pt-5 border-t border-[#dbeafe]">
+          <p class="m-0 text-xs font-bold text-[#0c2942]">لديك كود تفعيل؟</p>
           <input
             id="activationCode"
             type="text"
-            class="mt-3 w-full text-center uppercase border border-[#d8ddd7] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#176b64]/20"
+            class="mt-3 w-full text-center uppercase border border-[#dbeafe] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#0369a1]/20"
             placeholder="أدخل كود التفعيل"
           />
           <button
             type="button"
             onclick="activateCode()"
-            class="mt-2 w-full bg-[#18333a] hover:bg-[#176b64] text-white rounded-xl py-3 text-sm font-bold"
+            class="mt-2 w-full bg-[#0c2942] hover:bg-[#0369a1] text-white rounded-xl py-3 text-sm font-bold"
           >
             تفعيل الاشتراك
           </button>
@@ -259,32 +273,32 @@
 
     <div id="appScreen" class="hidden min-h-screen">
       <header
-        class="sticky top-0 z-30 bg-[#f6f3eb]/90 backdrop-blur border-b border-[#d8ddd7]"
+        class="sticky top-0 z-30 bg-[#032a4a]/95 backdrop-blur border-b border-[#7dd3fc]/20"
       >
         <div
           class="max-w-7xl mx-auto px-5 h-[72px] flex items-center justify-between"
         >
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 rounded-xl bg-[#18333a] text-white grid place-items-center font-extrabold"
+              class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0ea5e9] to-[#0369a1] text-white grid place-items-center font-extrabold"
             >
               ↗
             </div>
             <div>
-              <p class="brand m-0 text-lg font-extrabold">مسار</p>
-              <p class="m-0 text-[10px] text-slate-500">البحث والتقديم بوضوح</p>
+              <p class="brand m-0 text-lg font-extrabold text-white">مسار</p>
+              <p class="m-0 text-[10px] text-[#bae6fd]">البحث والتقديم بوضوح</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
             <div class="hidden sm:block text-left">
-              <p id="userName" class="m-0 text-xs font-bold"></p>
-              <p class="m-0 text-[10px] text-slate-500">منظّم التقديم الشخصي</p>
+              <p id="userName" class="m-0 text-xs font-bold text-white"></p>
+              <p class="m-0 text-[10px] text-[#bae6fd]">منظّم التقديم الشخصي</p>
             </div>
             <button
               id="subscriptionBtn"
               type="button"
               onclick="showSubscribeScreen()"
-              class="text-[10px] font-bold border border-[#d8ddd7] bg-white rounded-lg px-2 py-1.5 text-[#176b64]"
+              class="text-[10px] font-bold border border-white/25 bg-white/10 rounded-full px-3 py-1.5 text-white"
             >
               <span id="subscriptionStatus">تجربة مجانية</span>
             </button>
@@ -292,7 +306,7 @@
               id="logoutBtn"
               type="button"
               onclick="logout()"
-              class="text-xs text-slate-500 hover:text-[#176b64]"
+              class="text-xs text-[#bae6fd] hover:text-white"
             >
               تسجيل الخروج
             </button>
@@ -310,11 +324,11 @@
         dir="rtl"
       >
         <aside class="hidden lg:block">
-          <p class="text-[11px] font-bold text-[#59726b] tracking-wide mb-3">
+          <p class="text-[11px] font-bold text-[#5b7285] tracking-wide mb-3">
             مساحة العمل
           </p>
           <nav class="space-y-1" aria-label="مساحة العمل">
-            <button type="button" onclick="setView('jobs')" data-view="jobs" class="view-btn active w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-right bg-[#e4eee8] text-[#176b64]">↗ <span>فرص الوظائف</span></button>
+            <button type="button" onclick="setView('jobs')" data-view="jobs" class="view-btn active w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold text-right bg-[#e0f2fe] text-[#0369a1]">↗ <span>فرص الوظائف</span></button>
             <button
               type="button"
               onclick="setView('search')"
@@ -332,17 +346,17 @@
               ▣ <span>طلبات التقديم</span
               ><span
                 id="navCount"
-                class="mr-auto bg-[#d95d39] text-white rounded-full text-[10px] px-2 py-0.5 hidden"
+                class="mr-auto bg-[#f97316] text-white rounded-full text-[10px] px-2 py-0.5 hidden"
                 >0</span
               >
             </button>
           </nav>
-          <div class="mt-8 pr-3 border-r border-dashed border-[#9eb2a8]">
+          <div class="mt-8 pr-3 border-r border-dashed border-[#7dd3fc]">
             <p class="text-[10px] font-bold text-slate-500 mb-3">رحلتك الآن</p>
             <div class="space-y-4 text-[11px] font-bold text-slate-400">
-              <p class="m-0 text-[#176b64]">
+              <p class="m-0 text-[#0369a1]">
                 <span
-                  class="inline-block w-2 h-2 bg-[#d95d39] rounded-full ml-2"
+                  class="inline-block w-2 h-2 bg-[#f97316] rounded-full ml-2"
                 ></span
                 >١. حدد وجهتك
               </p>
@@ -351,7 +365,7 @@
             </div>
           </div>
           <p
-            class="mt-8 p-3 border border-[#d8ddd7] text-[11px] leading-6 text-slate-500 bg-white/60"
+            class="mt-8 p-3 border border-[#dbeafe] text-[11px] leading-6 text-slate-500 bg-white/60"
           >
             لا يجمع الموقع بيانات من LinkedIn ولا يقدّم بالنيابة عنك. تفتح
             الروابط المصدر لتكمل الخطوات بنفسك.
@@ -399,16 +413,16 @@
         </section>
 
         <section id="searchView" class="hidden" aria-label="اقتراحات مهنية بالذكاء الاصطناعي">
-          <p class="text-[11px] text-[#176b64] font-bold tracking-wide mb-3">
+          <p class="text-[11px] text-[#0369a1] font-bold tracking-wide mb-3">
             <span
-              class="inline-block h-px w-6 bg-[#d95d39] align-middle ml-2"
+              class="inline-block h-px w-6 bg-[#f97316] align-middle ml-2"
             ></span>
             اقتراحات بالذكاء الاصطناعي، وليست وظائف حية
           </p>
           <h1
             class="text-4xl sm:text-5xl font-extrabold leading-[1.35] tracking-tight m-0"
           >
-            ابحث بوعي،<br /><span class="text-[#176b64]">وقدّم بثقة.</span>
+            ابحث بوعي،<br /><span class="text-[#0369a1]">وقدّم بثقة.</span>
           </h1>
           <p class="max-w-xl mt-4 text-sm leading-8 text-slate-500">
             أدخل المسمى والموقع لتحصل على نتائج اقتراحية داخل مسار، أو أرفق
@@ -416,9 +430,9 @@
           </p>
 
           <div
-            class="mt-6 max-w-xl border-y border-[#c9d5ce] bg-white/40 px-4 py-3 flex items-center gap-2 path-dots"
+            class="mt-6 max-w-xl border-y border-[#bae6fd] bg-white/40 px-4 py-3 flex items-center gap-2 path-dots"
           >
-            <div class="text-center text-[10px] font-bold text-[#176b64]">
+            <div class="text-center text-[10px] font-bold text-[#0369a1]">
               <span class="status-dot done mx-auto mb-1 block"></span>وجّه البحث
             </div>
             <div class="route-line"></div>
@@ -433,18 +447,18 @@
 
           <form
             id="searchForm"
-            class="mt-6 bg-[#fffdf8] border border-[#d8ddd7] shadow-xl shadow-[#18333a]/5 rounded-[3px_20px_3px_20px] p-5 sm:p-7"
+            class="mt-6 bg-[#ffffff] border border-[#dbeafe] shadow-xl shadow-[#0c2942]/5 rounded-[3px_20px_3px_20px] p-5 sm:p-7"
             onsubmit="searchJobs(event)"
           >
             <div class="flex items-start justify-between gap-4 mb-5">
               <div>
-                <p class="text-[10px] font-bold text-[#59726b] m-0">
+                <p class="text-[10px] font-bold text-[#5b7285] m-0">
                   بحث موجّه
                 </p>
                 <h2 class="m-0 mt-1 font-bold text-xl">حدد وجهتك المهنية</h2>
               </div>
               <span
-                class="text-[10px] border border-[#cfe0da] bg-[#f2f7f5] text-[#176b64] rounded-lg px-2 py-1 font-bold"
+                class="text-[10px] border border-[#bae6fd] bg-[#f0f9ff] text-[#0369a1] rounded-lg px-2 py-1 font-bold"
                 >يفتح LinkedIn</span
               >
             </div>
@@ -454,11 +468,11 @@
                   id="jobTitle"
                   required
                   type="text"
-                  class="mt-2 block w-full rounded-xl border border-[#d8ddd7] bg-[#fcfbf7] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#176b64]/20 focus:border-[#176b64]"
+                  class="mt-2 block w-full rounded-xl border border-[#dbeafe] bg-[#f6fbff] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#0369a1]/20 focus:border-[#0369a1]"
                   placeholder="مثال: Financial Manager, UX Designer"
               /></label>
               <label class="text-xs font-bold text-slate-600"
-                >الدولة<select id="location" class="mt-2 block w-full rounded-xl border border-[#d8ddd7] bg-[#fcfbf7] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#176b64]/20 focus:border-[#176b64]"><option value="الكويت">الكويت</option><option value="مصر">مصر</option></select></label>
+                >الدولة<select id="location" class="mt-2 block w-full rounded-xl border border-[#dbeafe] bg-[#f6fbff] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#0369a1]/20 focus:border-[#0369a1]"><option value="الكويت">الكويت</option><option value="مصر">مصر</option></select></label>
               <label class="text-xs font-bold text-slate-600"
                 >السيرة الذاتية PDF
                 <span class="text-slate-400 font-normal"
@@ -467,18 +481,18 @@
                   id="pdfFile"
                   accept="application/pdf,.pdf"
                   type="file"
-                  class="mt-2 block w-full text-xs text-slate-500 file:ml-3 file:border-0 file:rounded-lg file:bg-[#e4eee8] file:text-[#176b64] file:px-3 file:py-2 file:font-bold"
+                  class="mt-2 block w-full text-xs text-slate-500 file:ml-3 file:border-0 file:rounded-lg file:bg-[#e0f2fe] file:text-[#0369a1] file:px-3 file:py-2 file:font-bold"
               /></label>
             </div>
             <div
-              class="mt-5 pt-4 border-t border-[#ebe8df] flex flex-wrap items-center gap-x-5 gap-y-3"
+              class="mt-5 pt-4 border-t border-[#dbeafe] flex flex-wrap items-center gap-x-5 gap-y-3"
             >
               <label
                 class="flex items-center gap-2 text-xs font-bold text-slate-600"
                 ><input
                   id="remote"
                   type="checkbox"
-                  class="accent-[#176b64] w-4 h-4"
+                  class="accent-[#0369a1] w-4 h-4"
                 />
                 عن بُعد داخل الدولة</label
               >
@@ -487,13 +501,13 @@
                 ><input
                   id="easyApply"
                   type="checkbox"
-                  class="accent-[#176b64] w-4 h-4"
+                  class="accent-[#0369a1] w-4 h-4"
                 />
                 Easy Apply</label
               >
               <select
                 id="dateRange"
-                class="text-xs font-bold text-[#176b64] bg-transparent outline-none"
+                class="text-xs font-bold text-[#0369a1] bg-transparent outline-none"
               >
                 <option value="week">الأسبوع الأخير</option>
                 <option value="day">آخر 24 ساعة</option>
@@ -503,7 +517,7 @@
               <button
                 id="searchBtn"
                 type="submit"
-                class="mr-auto w-full sm:w-auto bg-[#18333a] hover:bg-[#176b64] text-white font-bold text-sm rounded-xl px-5 py-3 flex justify-center items-center gap-2"
+                class="mr-auto w-full sm:w-auto bg-[#0c2942] hover:bg-[#0369a1] text-white font-bold text-sm rounded-xl px-5 py-3 flex justify-center items-center gap-2"
               >
                 إنشاء اقتراحات مهنية
               </button>
@@ -518,7 +532,7 @@
 
           <div id="loading" class="hidden py-10 text-center">
             <div
-              class="w-8 h-8 border-4 border-[#176b64] border-t-transparent rounded-full animate-spin mx-auto"
+              class="w-8 h-8 border-4 border-[#0369a1] border-t-transparent rounded-full animate-spin mx-auto"
             ></div>
             <p id="loadingText" class="mt-4 text-sm text-slate-500">
               جاري تحليل السيرة الذاتية واقتراح عناوين البحث...
@@ -527,7 +541,7 @@
           <section id="suggestionsSection" class="hidden mt-8">
             <div class="flex justify-between items-end gap-4">
               <div>
-                <p class="text-[10px] font-bold text-[#59726b] m-0">
+                <p class="text-[10px] font-bold text-[#5b7285] m-0">
                   اقتراحات مهنية فقط
                 </p>
                 <h2 class="m-0 mt-1 text-xl font-bold">مسارات مقترحة لبحثك</h2>
@@ -545,15 +559,15 @@
           <div class="flex flex-wrap gap-4 justify-between items-end">
             <div>
               <p
-                class="text-[11px] text-[#176b64] font-bold tracking-wide mb-3"
+                class="text-[11px] text-[#0369a1] font-bold tracking-wide mb-3"
               >
                 <span
-                  class="inline-block h-px w-6 bg-[#d95d39] align-middle ml-2"
+                  class="inline-block h-px w-6 bg-[#f97316] align-middle ml-2"
                 ></span>
                 متابعة يدوية
               </p>
               <h1 class="text-4xl font-extrabold leading-[1.35] m-0">
-                طلباتك،<br /><span class="text-[#176b64]">في مسار واحد.</span>
+                طلباتك،<br /><span class="text-[#0369a1]">في مسار واحد.</span>
               </h1>
               <p class="mt-3 text-sm leading-7 text-slate-500">
                 أضف رابط إعلان LinkedIn الذي راجعته، ثم حدّث المرحلة التي وصلت
@@ -564,14 +578,14 @@
               <button
                 type="button"
                 onclick="exportSubmittedApplications()"
-                class="border border-[#176b64] bg-white hover:bg-[#e4eee8] text-[#176b64] rounded-xl px-4 py-3 text-sm font-bold"
+                class="border border-[#0369a1] bg-white hover:bg-[#e0f2fe] text-[#0369a1] rounded-xl px-4 py-3 text-sm font-bold"
               >
                 تصدير Excel / CSV
               </button>
               <button
                 type="button"
                 onclick="openApplicationModal()"
-                class="bg-[#18333a] hover:bg-[#176b64] text-white rounded-xl px-4 py-3 text-sm font-bold"
+                class="bg-[#0c2942] hover:bg-[#0369a1] text-white rounded-xl px-4 py-3 text-sm font-bold"
               >
                 + أضف فرصة
               </button>
@@ -583,9 +597,9 @@
           <div id="applicationsList" class="mt-7 space-y-3"></div>
           <div
             id="applicationsEmpty"
-            class="mt-7 max-w-xl text-center border border-dashed border-[#cbd1c8] bg-white/50 p-10"
+            class="mt-7 max-w-xl text-center border border-dashed border-[#dbeafe] bg-white/50 p-10"
           >
-            <p class="text-[#176b64] font-bold text-xs">لوحة نظيفة</p>
+            <p class="text-[#0369a1] font-bold text-xs">لوحة نظيفة</p>
             <h2 class="text-xl font-bold mt-2">لا توجد فرص في مسارك بعد</h2>
             <p class="text-sm leading-7 text-slate-500">
               بعد مراجعة إعلان في LinkedIn، أضف رابطه هنا لتتابع التقديم
@@ -594,7 +608,7 @@
             <button
               type="button"
               onclick="openApplicationModal()"
-              class="mt-3 text-sm font-bold text-[#176b64] underline underline-offset-4"
+              class="mt-3 text-sm font-bold text-[#0369a1] underline underline-offset-4"
             >
               أضف أول فرصة
             </button>
@@ -602,20 +616,20 @@
         </section>
 
         <aside class="hidden lg:grid content-start gap-4 pt-12">
-          <article class="border border-[#d8ddd7] bg-white/60 p-5">
-            <p class="text-[10px] font-bold text-[#59726b]">قاعدة المسار</p>
+          <article class="border border-[#dbeafe] bg-white/60 p-5">
+            <p class="text-[10px] font-bold text-[#5b7285]">قاعدة المسار</p>
             <blockquote
-              class="m-0 mt-3 text-sm leading-8 font-bold text-[#2b5550]"
+              class="m-0 mt-3 text-sm leading-8 font-bold text-[#0c4a6e]"
             >
               «الفرصة الجيدة ليست التي تراها أولاً، بل التي تعرف لماذا تناسبك.»
             </blockquote>
-            <div class="mt-4 w-9 h-0.5 bg-[#d95d39]"></div>
+            <div class="mt-4 w-9 h-0.5 bg-[#f97316]"></div>
             <p class="mt-4 m-0 text-[11px] leading-6 text-slate-400">
               دوّن سبب ملاءمة كل إعلان قبل بدء التقديم.
             </p>
           </article>
           <article
-            class="border border-[#d8ddd7] bg-[#e6eee8]/50 p-4 text-[11px] leading-6 text-slate-500"
+            class="border border-[#dbeafe] bg-[#e0f2fe]/50 p-4 text-[11px] leading-6 text-slate-500"
           >
             يتم تخزين فرص التقديم وحالاتها في متصفحك فقط. لا تُرفع السيرة
             الذاتية إلا عند طلب الاقتراحات.
@@ -629,7 +643,7 @@
       class="hidden fixed inset-0 z-50 p-4 modal-backdrop items-center justify-center"
     >
       <div
-        class="w-full max-w-lg bg-[#fffdf8] rounded-[4px_22px_4px_22px] shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto"
+        class="w-full max-w-lg bg-[#ffffff] rounded-[4px_22px_4px_22px] shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto"
       >
         <button
           type="button"
@@ -638,7 +652,7 @@
         >
           ×
         </button>
-        <p class="text-[10px] font-bold text-[#59726b]">فرصة جديدة</p>
+        <p class="text-[10px] font-bold text-[#5b7285]">فرصة جديدة</p>
         <h2 id="applicationModalHeading" class="text-xl font-bold mt-1">ضع الإعلان على الخريطة</h2>
         <p class="text-xs leading-6 text-slate-500">
           انسخ رابط إعلان LinkedIn بعد مراجعته؛ سيكون التقديم بيدك داخل المنصة.
@@ -648,13 +662,13 @@
             >المسمى الوظيفي<input
               id="applicationTitle"
               required
-              class="mt-1 w-full border border-[#d8ddd7] rounded-lg px-3 py-2.5 text-sm"
+              class="mt-1 w-full border border-[#dbeafe] rounded-lg px-3 py-2.5 text-sm"
               placeholder="مثال: Product Designer" /></label
           ><label class="block text-xs font-bold"
             >الشركة<input
               id="applicationCompany"
               required
-              class="mt-1 w-full border border-[#d8ddd7] rounded-lg px-3 py-2.5 text-sm"
+              class="mt-1 w-full border border-[#dbeafe] rounded-lg px-3 py-2.5 text-sm"
               placeholder="اسم الشركة" /></label
           ><label class="block text-xs font-bold"
             >رابط إعلان LinkedIn<input
@@ -662,13 +676,13 @@
               dir="ltr"
               required
               type="url"
-              class="mt-1 w-full border border-[#d8ddd7] rounded-lg px-3 py-2.5 text-sm text-left"
+              class="mt-1 w-full border border-[#dbeafe] rounded-lg px-3 py-2.5 text-sm text-left"
               placeholder="https://www.linkedin.com/jobs/view/..." /></label
           ><label class="block text-xs font-bold"
             >ملاحظة لنفسك <span class="text-slate-400 font-normal">اختياري</span
             ><textarea
               id="applicationNotes"
-              class="mt-1 w-full border border-[#d8ddd7] rounded-lg px-3 py-2.5 text-sm"
+              class="mt-1 w-full border border-[#dbeafe] rounded-lg px-3 py-2.5 text-sm"
               rows="3"
               placeholder="لماذا تناسبك؟ وما الذي ستعدله قبل التقديم؟"
             ></textarea>
@@ -682,7 +696,7 @@
               إلغاء</button
             ><button
               type="submit"
-              class="bg-[#18333a] text-white rounded-lg px-4 py-2 text-sm font-bold"
+              class="bg-[#0c2942] text-white rounded-lg px-4 py-2 text-sm font-bold"
             >
               حفظ الفرصة
             </button>
@@ -775,7 +789,7 @@
         const node = document.createElement("div");
         node.setAttribute("role", type === "error" ? "alert" : "status");
         node.textContent = message;
-        node.className = `masar-message fixed z-[60] bottom-5 left-1/2 -translate-x-1/2 max-w-[90vw] break-words text-center px-4 py-3 rounded-xl shadow-xl text-sm font-bold ${type === "error" ? "bg-red-600 text-white" : "bg-[#18333a] text-white"}`;
+        node.className = `masar-message fixed z-[60] bottom-5 left-1/2 -translate-x-1/2 max-w-[90vw] break-words text-center px-4 py-3 rounded-xl shadow-xl text-sm font-bold ${type === "error" ? "bg-red-600 text-white" : "bg-[#0c2942] text-white"}`;
         document.body.append(node);
         setTimeout(() => node.remove(), 4200);
       }
@@ -909,12 +923,12 @@
           return;
         }
         if (isSubscribed()) {
-          message.className = "mt-3 text-xs font-bold text-[#176b64]";
+          message.className = "mt-3 text-xs font-bold text-[#0369a1]";
           message.textContent = "حسابك مفعل بالفعل.";
           return;
         }
         setSubscribed(code);
-        message.className = "mt-3 text-xs font-bold text-[#176b64]";
+        message.className = "mt-3 text-xs font-bold text-[#0369a1]";
         message.textContent = "تم تفعيل الاشتراك بنجاح. جاري الرجوع للواجهة...";
         setTimeout(backToApp, 1100);
       }
@@ -1001,8 +1015,8 @@
         document.querySelectorAll(".view-btn").forEach(button => {
           const active = button.dataset.view === view;
           button.classList.toggle("active", active);
-          button.classList.toggle("bg-[#e4eee8]", active);
-          button.classList.toggle("text-[#176b64]", active);
+          button.classList.toggle("bg-[#e0f2fe]", active);
+          button.classList.toggle("text-[#0369a1]", active);
           button.classList.toggle("text-slate-500", !active);
           button.setAttribute("aria-current", active ? "page" : "false");
         });
@@ -1313,7 +1327,7 @@
         suggestions.forEach((item) => {
           const card = document.createElement("article");
           card.className =
-            "bg-[#fffdf8] border border-[#d8ddd7] rounded-[3px_14px_3px_14px] p-4 flex flex-col sm:flex-row gap-4 justify-between";
+            "bg-[#ffffff] border border-[#dbeafe] rounded-[3px_14px_3px_14px] p-4 flex flex-col sm:flex-row gap-4 justify-between";
           const text = document.createElement("div");
           const heading = document.createElement("div");
           heading.className = "flex gap-2 items-center flex-wrap";
@@ -1322,7 +1336,7 @@
           title.textContent = item.title;
           const score = document.createElement("span");
           score.className =
-            "bg-[#e4eee8] text-[#176b64] text-[10px] font-bold rounded-full px-2 py-1";
+            "bg-[#e0f2fe] text-[#0369a1] text-[10px] font-bold rounded-full px-2 py-1";
           score.textContent = `${item.match_score || 0}% توافق`;
           heading.append(title, score);
           const reason = document.createElement("p");
@@ -1333,7 +1347,7 @@
           (item.skills || []).slice(0, 5).forEach((skill) => {
             const tag = document.createElement("span");
             tag.className =
-              "text-[10px] bg-[#f2f4ef] text-[#59726b] px-2 py-1 rounded-md";
+              "text-[10px] bg-[#f0f9ff] text-[#5b7285] px-2 py-1 rounded-md";
             tag.textContent = skill;
             skills.append(tag);
           });
@@ -1344,7 +1358,7 @@
           const open = document.createElement("button");
           open.type = "button";
           open.className =
-            "text-xs bg-[#18333a] text-white rounded-lg px-3 py-2 font-bold";
+            "text-xs bg-[#0c2942] text-white rounded-lg px-3 py-2 font-bold";
           open.textContent = "استخدم هذا المسار";
           open.onclick = () => {
             document.getElementById("jobTitle").value = item.title;
@@ -1419,10 +1433,10 @@
         shown.forEach((item) => {
           const card = document.createElement("article");
           card.className =
-            "relative overflow-hidden border border-[#d8ddd7] bg-[#fffdf8] rounded-[3px_14px_3px_14px] p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between";
+            "relative overflow-hidden border border-[#dbeafe] bg-[#ffffff] rounded-[3px_14px_3px_14px] p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between";
           const accent = document.createElement("span");
           accent.className =
-            "absolute right-0 top-4 h-8 border-r-[3px] border-[#d95d39]";
+            "absolute right-0 top-4 h-8 border-r-[3px] border-[#f97316]";
           const main = document.createElement("div");
           const head = document.createElement("div");
           head.className = "flex gap-2 items-center flex-wrap";
@@ -1431,7 +1445,7 @@
           title.textContent = item.title;
           const badge = document.createElement("span");
           badge.className =
-            "text-[10px] bg-[#e4eee8] text-[#176b64] px-2 py-1 rounded-full font-bold";
+            "text-[10px] bg-[#e0f2fe] text-[#0369a1] px-2 py-1 rounded-full font-bold";
           badge.textContent = item.status;
           head.append(title, badge);
           const meta = document.createElement("p");
@@ -1445,7 +1459,7 @@
             const dot = document.createElement("i");
             dot.className = `status-dot ${index <= STATUS.indexOf(item.status) ? "done" : ""}`;
             const line = document.createElement("b");
-            line.className = "w-7 border-t border-dashed border-[#9eb2a8]";
+            line.className = "w-7 border-t border-dashed border-[#7dd3fc]";
             mark.append(dot);
             if (index < 3) mark.append(line);
             trail.append(mark);
@@ -1464,12 +1478,12 @@
           link.target = "_blank";
           link.rel = "noreferrer";
           link.className =
-            "text-xs text-[#176b64] font-bold underline underline-offset-4";
+            "text-xs text-[#0369a1] font-bold underline underline-offset-4";
           link.textContent = "فتح الإعلان ↗";
           const select = document.createElement("select");
           select.setAttribute("aria-label",`حالة الطلب ${item.title}`);
           select.className =
-            "border border-[#d8ddd7] rounded-lg px-2 py-1.5 text-xs bg-white";
+            "border border-[#dbeafe] rounded-lg px-2 py-1.5 text-xs bg-white";
           STATUS.forEach((status) => {
             const option = document.createElement("option");
             option.value = status;
@@ -1481,7 +1495,7 @@
             updateApplicationStatus(item.id, select.value);
           const remove = document.createElement("button");
           remove.type = "button";
-          remove.className = "text-xs text-[#b05b46]";
+          remove.className = "text-xs text-[#c2410c]";
           remove.textContent = "إزالة";
           remove.onclick = () => removeApplication(item.id);
           actions.append(link, select, remove);
