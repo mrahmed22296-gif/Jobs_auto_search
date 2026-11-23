@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0f4f4a" />
-    <title>مسار | وظائف الكويت والخليج</title>
+    <title>مسار | وظائف الكويت ومصر</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700&display=swap"
@@ -152,7 +152,7 @@
         </p>
         <h1 class="text-2xl font-extrabold mt-2 mb-3">مسار وظيفي أوضح</h1>
         <p class="text-sm text-slate-500 leading-7 mb-7">
-          جهّز بحثك عن وظائف الكويت والخليج، ونظّم الفرص التي راجعتها في مكان واحد. المصادر الخارجية لم تُربط بعد.
+          جهّز بحثك عن وظائف الكويت ومصر، ونظّم الفرص التي راجعتها في مكان واحد. المصادر الخارجية لم تُربط بعد.
         </p>
         <button
           id="googleBtn"
@@ -349,19 +349,19 @@
         </aside>
 
         <section id="jobsView" aria-labelledby="jobsHeading">
-          <div class="section-eyebrow"><span></span>الكويت والخليج فقط</div>
+          <div class="section-eyebrow"><span></span>الكويت ومصر فقط</div>
           <div class="jobs-heading-row">
             <h1 id="jobsHeading" class="jobs-heading">وجهتك القادمة،<br><span>تبدأ من هنا.</span></h1>
             <span class="source-status"><i></i>المصادر غير متصلة</span>
           </div>
           <p class="section-intro">جهّز معاييرك الآن، واحتفظ ببحثك للعودة إليه. ستظهر الإعلانات الحقيقية بروابط مصادرها بعد إتمام الربط.</p>
           <form id="jobsFilterForm" class="jobs-panel" onsubmit="applyJobFilters(event)">
-            <div class="panel-heading"><div><p class="section-eyebrow small">ابحث في الاتجاه الصحيح</p><h2>ما الفرصة التي تبحث عنها؟</h2></div><span class="quiet-badge">٦ دول خليجية</span></div>
+            <div class="panel-heading"><div><p class="section-eyebrow small">ابحث في الاتجاه الصحيح</p><h2>ما الفرصة التي تبحث عنها؟</h2></div><span class="quiet-badge">الكويت ومصر</span></div>
             <label class="field-label" for="jobsQuery">المسمى أو الكلمات المفتاحية</label>
             <input id="jobsQuery" type="search" maxlength="120" class="field-input" placeholder="مثال: محاسب، مدير مالي، مهندس" autocomplete="off">
             <div class="filter-grid">
               <div><label class="field-label" for="jobsCountry">الدولة</label><select id="jobsCountry" class="field-input">
-                <option value="all">كل دول الخليج</option><option value="KW">الكويت</option><option value="SA">السعودية</option><option value="AE">الإمارات</option><option value="QA">قطر</option><option value="BH">البحرين</option><option value="OM">عُمان</option>
+                <option value="all">الكويت ومصر</option><option value="KW">الكويت</option><option value="EG">مصر</option>
               </select></div>
               <div><label class="field-label" for="jobsWorkplace">نظام العمل</label><select id="jobsWorkplace" class="field-input"><option value="all">كل الأنظمة</option><option value="onsite">من مقر العمل</option><option value="hybrid">هجين</option><option value="remote">عن بُعد داخل الدولة</option></select></div>
               <div><label class="field-label" for="jobsPeriod">تاريخ نشر الإعلان</label><select id="jobsPeriod" class="field-input"><option value="all">أي وقت</option><option value="day">آخر ٢٤ ساعة</option><option value="week">آخر أسبوع</option><option value="month">آخر شهر</option></select></div>
@@ -374,7 +374,7 @@
             <div id="savedJobSearches" class="saved-searches-list"></div>
             <p id="savedSearchesEmpty" class="helper-copy">لم تحفظ بحثاً بعد. اختر معاييرك واضغط «حفظ هذا البحث».</p>
           </section>
-          <div class="results-toolbar"><h2>الإعلانات الوظيفية</h2><span id="jobsFilterSummary" class="filter-summary">كل دول الخليج · كل الأنظمة</span></div>
+          <div class="results-toolbar"><h2>الإعلانات الوظيفية</h2><span id="jobsFilterSummary" class="filter-summary">الكويت ومصر · كل الأنظمة</span></div>
           <div id="jobsConnectionState" class="source-empty" role="status" aria-live="polite">
             <div class="empty-symbol" aria-hidden="true">↗</div><span class="quiet-badge">بانتظار ربط المصادر</span>
             <h2>لا توجد إعلانات متصلة بعد</h2>
@@ -382,7 +382,7 @@
             <p id="jobsSelectionNote" class="selection-note">يمكنك حفظ معاييرك والعودة بعد الربط، أو تنظيم فرص LinkedIn التي راجعتها بنفسك.</p>
             <button type="button" class="secondary-action" onclick="setView('applications')">افتح لوحة طلباتك</button>
           </div>
-          <details class="coverage-details"><summary>ما الذي سيكون واضحاً مع كل إعلان؟</summary><p>الشركة، الدولة ومكان العمل، المصدر ورابط الإعلان، والتاريخ أو الراتب عندما يوفرهما المصدر. مكان الوظيفة لا يضمن أهلية الإقامة أو التأشيرة. ربط المصادر والتحقق من التغطية خطوة لاحقة.</p><div class="country-chips"><span>الكويت</span><span>السعودية</span><span>الإمارات</span><span>قطر</span><span>البحرين</span><span>عُمان</span></div><p class="helper-copy">الدول هنا نطاق البحث المطلوب، وليست ادعاءً بأن مصدراً يغطيها جميعاً حالياً.</p></details>
+          <details class="coverage-details"><summary>ما الذي سيكون واضحاً مع كل إعلان؟</summary><p>الشركة، الدولة ومكان العمل، المصدر ورابط الإعلان، والتاريخ أو الراتب عندما يوفرهما المصدر. مكان الوظيفة لا يضمن أهلية الإقامة أو التأشيرة. ربط المصادر والتحقق من التغطية خطوة لاحقة.</p><div class="country-chips"><span>الكويت</span><span>مصر</span></div><p class="helper-copy">الدول هنا نطاق البحث المطلوب، وليست ادعاءً بأن مصدراً يغطيها جميعاً حالياً.</p></details>
         </section>
 
         <section id="searchView" class="hidden" aria-label="اقتراحات مهنية بالذكاء الاصطناعي">
@@ -445,7 +445,7 @@
                   placeholder="مثال: Financial Manager, UX Designer"
               /></label>
               <label class="text-xs font-bold text-slate-600"
-                >الدولة<select id="location" class="mt-2 block w-full rounded-xl border border-[#d8ddd7] bg-[#fcfbf7] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#176b64]/20 focus:border-[#176b64]"><option value="الكويت">الكويت</option><option value="السعودية">السعودية</option><option value="الإمارات العربية المتحدة">الإمارات</option><option value="قطر">قطر</option><option value="البحرين">البحرين</option><option value="عمان">عُمان</option></select></label>
+                >الدولة<select id="location" class="mt-2 block w-full rounded-xl border border-[#d8ddd7] bg-[#fcfbf7] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#176b64]/20 focus:border-[#176b64]"><option value="الكويت">الكويت</option><option value="مصر">مصر</option></select></label>
               <label class="text-xs font-bold text-slate-600"
                 >السيرة الذاتية PDF
                 <span class="text-slate-400 font-normal"
@@ -1008,7 +1008,7 @@
         // Otherwise browser scroll anchoring can leave the new panel heading hidden.
         if (window.requestAnimationFrame) window.requestAnimationFrame(() => window.scrollTo({top:0,left:0,behavior:"instant"}));
       }
-      const GULF_LABELS = Object.freeze({all:"كل دول الخليج",KW:"الكويت",SA:"السعودية",AE:"الإمارات",QA:"قطر",BH:"البحرين",OM:"عُمان"});
+      const COUNTRY_LABELS = Object.freeze({all:"الكويت ومصر",KW:"الكويت",EG:"مصر"});
       const WORKPLACE_LABELS = Object.freeze({all:"كل الأنظمة",onsite:"من مقر العمل",hybrid:"هجين",remote:"عن بُعد داخل الدولة"});
       const PERIOD_LABELS = Object.freeze({all:"أي وقت",day:"آخر ٢٤ ساعة",week:"آخر أسبوع",month:"آخر شهر"});
       // No provider is connected. Never fill this UI with generated or demo job rows.
@@ -1017,14 +1017,14 @@
         const workplace = document.getElementById("jobsWorkplace").value;
         const period = document.getElementById("jobsPeriod").value;
         return {query:document.getElementById("jobsQuery").value.trim().slice(0,120),
-          country:Object.hasOwn(GULF_LABELS,country)?country:"all",
+          country:Object.hasOwn(COUNTRY_LABELS,country)?country:"all",
           workplace:Object.hasOwn(WORKPLACE_LABELS,workplace)?workplace:"all",
           period:Object.hasOwn(PERIOD_LABELS,period)?period:"all"};
       }
       function applyJobFilters(event) {
         event?.preventDefault();
         const f = readJobFilters();
-        document.getElementById("jobsFilterSummary").textContent = [GULF_LABELS[f.country],WORKPLACE_LABELS[f.workplace],PERIOD_LABELS[f.period]].join(" · ");
+        document.getElementById("jobsFilterSummary").textContent = [COUNTRY_LABELS[f.country],WORKPLACE_LABELS[f.workplace],PERIOD_LABELS[f.period]].join(" · ");
         document.getElementById("jobsSelectionNote").textContent = f.query ? `بحثك: ${f.query}. معاييرك جاهزة، لكن لا يمكن جلب إعلانات قبل ربط مصدر فعلي.` : "معاييرك جاهزة. يمكنك حفظ البحث؛ ربط مصادر الإعلانات لم يكتمل بعد.";
       }
       function resetJobFilters(notify = true) {
@@ -1044,7 +1044,7 @@
         }
       }
       function getSavedJobSearches() {
-        return readStorage("savedJobSearches",[]).filter(row => row && typeof row === "object" && typeof row.id === "string" && typeof row.query === "string" && row.query.length <=120 && Object.hasOwn(GULF_LABELS,row.country) && Object.hasOwn(WORKPLACE_LABELS,row.workplace) && Object.hasOwn(PERIOD_LABELS,row.period));
+        return readStorage("savedJobSearches",[]).filter(row => row && typeof row === "object" && typeof row.id === "string" && typeof row.query === "string" && row.query.length <=120 && Object.hasOwn(COUNTRY_LABELS,row.country) && Object.hasOwn(WORKPLACE_LABELS,row.workplace) && Object.hasOwn(PERIOD_LABELS,row.period));
       }
       function saveJobSearch() {
         const filters = readJobFilters();
@@ -1078,7 +1078,7 @@
           const card=document.createElement("div");card.className="saved-search-card";
           const load=document.createElement("button");load.type="button";load.className="saved-search-load";
           const title=document.createElement("strong");title.textContent=row.query;
-          const meta=document.createElement("span");meta.textContent=[GULF_LABELS[row.country],WORKPLACE_LABELS[row.workplace],PERIOD_LABELS[row.period]].join(" · ");
+          const meta=document.createElement("span");meta.textContent=[COUNTRY_LABELS[row.country],WORKPLACE_LABELS[row.workplace],PERIOD_LABELS[row.period]].join(" · ");
           load.append(title,meta);load.onclick=()=>loadSavedJobSearch(row.id);
           const remove=document.createElement("button");remove.type="button";remove.className="text-action";remove.textContent="حذف";remove.setAttribute("aria-label",`حذف البحث ${row.query}`);remove.onclick=()=>removeSavedJobSearch(row.id);
           card.append(load,remove);list.append(card);
