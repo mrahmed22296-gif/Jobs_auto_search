@@ -703,29 +703,61 @@
 
     <script>
       const firebaseConfig = {
-        apiKey: "AIzaSyCnsQtY9PdymuKG5suBX1psYgdkCHFFYKs",
-        authDomain: "jobsautosearch.firebaseapp.com",
-        projectId: "jobsautosearch",
-        storageBucket: "jobsautosearch.firebasestorage.app",
-        messagingSenderId: "810040080530",
-        appId: "1:810040080530:web:468f87f88571a510980e4b",
+        apiKey: "AIzaSyCBtfYpB_j8X1ME-lMqP738Fy06FalSXIM",
+        authDomain: "resume-builder-access.firebaseapp.com",
+        projectId: "resume-builder-access",
+        storageBucket: "resume-builder-access.firebasestorage.app",
+        messagingSenderId: "209097923358",
+        appId: "1:209097923358:web:90e660900f02a621b5c70f",
       };
       const STATUS = ["محفوظة", "قيد التحضير", "تم التقديم", "مقابلة", "مغلقة"];
-      const VALID_CODES = [
-        "JOB2026-A1B2",
-        "JOB2026-C3D4",
-        "JOB2026-E5F6",
-        "JOB2026-G7H8",
-        "JOB2026-I9J0",
-        "WAMD-1001",
-        "WAMD-1002",
-        "WAMD-1003",
-        "WAMD-1004",
-        "WAMD-1005",
-      ];
       let currentUser = null;
       let auth = null;
 
+      const FS_ROOT = "https://firestore.googleapis.com/v1/projects/resume-builder-access/databases/(default)/documents";
+      async function syncUserDoc(markSubscription) {
+        try {
+          if (!currentUser?.uid) return;
+          const token = await currentUser.getIdToken();
+          const docPath = `projects/resume-builder-access/databases/(default)/documents/users/${currentUser.uid}`;
+          const writes = [
+            {
+              update: {
+                name: docPath,
+                fields: {
+                  email: { stringValue: currentUser.email || "" },
+                  name: { stringValue: currentUser.displayName || "" },
+                  lastSeenAt: { timestampValue: new Date().toISOString() },
+                },
+              },
+              updateMask: { fieldPaths: ["email", "name", "lastSeenAt"] },
+            },
+            {
+              transform: {
+                document: docPath,
+                fieldTransforms: [
+                  { fieldPath: "sites", appendMissingElements: { values: [{ stringValue: "jobs-auto-search" }] } },
+                ],
+              },
+            },
+          ];
+          if (markSubscription) {
+            writes.push({
+              transform: {
+                document: docPath,
+                fieldTransforms: [
+                  { fieldPath: "subscriptions", appendMissingElements: { values: [{ stringValue: "jobs-auto-search" }] } },
+                ],
+              },
+            });
+          }
+          await fetch(FS_ROOT + ":commit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+            body: JSON.stringify({ writes }),
+          });
+        } catch (e) {}
+      }
       function storageKey(name) {
         return `masar_${currentUser?.uid || "local"}_${name}`;
       }
@@ -896,7 +928,7 @@
           .classList.replace("flex", "hidden");
         document.getElementById("appScreen").classList.remove("hidden");
       }
-      function activateCode() {
+      async function activateCode() {
         const code = document
           .getElementById("activationCode")
           .value.trim()
@@ -908,7 +940,23 @@
           message.textContent = "أدخل كود التفعيل أولاً.";
           return;
         }
-        if (!VALID_CODES.includes(code)) {
+        message.className = "mt-3 text-xs font-bold text-slate-500";
+        message.textContent = "جاري التحقق من الكود...";
+        let okCode = false;
+        try {
+          const rr = await fetch("https://mohasaba-online.vercel.app/api/redeem", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ site: "jobs-auto-search", code }),
+          });
+          const rd = await rr.json();
+          okCode = !!(rd && rd.ok);
+        } catch (e) {
+          message.className = "mt-3 text-xs font-bold text-red-600";
+          message.textContent = "تعذر التحقق من الكود. تحقق من الاتصال وأعد المحاولة.";
+          return;
+        }
+        if (!okCode) {
           message.className = "mt-3 text-xs font-bold text-red-600";
           message.textContent = "كود التفعيل غير صحيح.";
           return;
@@ -924,6 +972,7 @@
           return;
         }
         setSubscribed(code);
+        syncUserDoc(true);
         message.className = "mt-3 text-xs font-bold text-[#0369a1]";
         message.textContent = "تم تفعيل الاشتراك بنجاح. جاري الرجوع للواجهة...";
         setTimeout(backToApp, 1100);
@@ -950,7 +999,10 @@
           auth.onAuthStateChanged((user) => {
             currentUser = user;
             setScreen(Boolean(user));
-            if (user) updateUserUI();
+            if (user) {
+              updateUserUI();
+              syncUserDoc(false);
+            }
           });
         } catch (error) {
           console.warn("Firebase unavailable", error);
@@ -1395,6 +1447,10 @@
         return `"${text.replaceAll('"', '""')}"`;
       }
       function exportSubmittedApplications() {
+        if (!hasFreeSearch()) {
+          showSubscribeScreen();
+          return;
+        }
         const submitted = getApplications().filter(
           (item) => item.status === "تم التقديم",
         );
@@ -1442,6 +1498,10 @@
         link.click();
         link.remove();
         URL.revokeObjectURL(url);
+        if (!isSubscribed()) {
+          incrementSearchCount();
+          updateSubscriptionUI();
+        }
         showMessage(
           `تم تصدير ${submitted.length} طلب/طلبات بصيغة CSV متوافقة مع Excel.`,
         );
